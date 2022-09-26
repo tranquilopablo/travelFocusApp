@@ -4,6 +4,7 @@ import css from './MainNavigation.module.css';
 import Backdrop from '../uiElements/Backdrop';
 import NavLinks from './NavLinks';
 import SideDrawer from '../uiElements/SideDrawer';
+import MainHeader from './MainHeader';
 
 const MainNavigation = () => {
   const [sideMenuIsOpen, setSideMenuIsOpen] = useState(false);
@@ -23,7 +24,7 @@ const MainNavigation = () => {
           <NavLinks />
         </nav>
       </SideDrawer>
-      <header className={css.mainHeader}>
+      <MainHeader>
         <button className={css.menuBtn} onClick={openSideMenu}>
           <i
             className={`fa fa-bars ${css.sideMenuIcon}`}
@@ -36,7 +37,7 @@ const MainNavigation = () => {
         <nav className={css.headerNav}>
           <NavLinks />
         </nav>
-      </header>
+      </MainHeader>
     </React.Fragment>
   );
 };
