@@ -1,7 +1,13 @@
 import React from 'react';
+import MainNavigation from './shared/components/navigation/MainNavigation';
 
 function App() {
-  return <h1>Let's start!</h1>;
+  return (
+    <>
+      <MainNavigation />
+      <h1>Let's start!</h1>
+    </>
+  );
 }
 
 export default App;
