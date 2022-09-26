@@ -18,27 +18,29 @@ function App() {
     <>
       <Router>
         <MainNavigation />
-        <Switch>
-          <Route path="/" exact>
-            <Users />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/ustawienia">
-            <Settings />
-          </Route>
-          <Route path="/:userId/miejsca">
-            <UserPlaces />
-          </Route>
-          <Route path="/miejsca/nowe">
-            <NewPlace />
-          </Route>
-          <Route path="/miejsca/:placeId">
-            <UpdatePlace />
-          </Route>
-          <Redirect to="/login" />
-        </Switch>
+        <main>
+          <Switch>
+            <Route path="/" exact>
+              <Users />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/ustawienia">
+              <Settings />
+            </Route>
+            <Route path="/:userId/miejsca">
+              <UserPlaces />
+            </Route>
+            <Route path="/miejsca/nowe">
+              <NewPlace />
+            </Route>
+            <Route path="/miejsca/:placeId">
+              <UpdatePlace />
+            </Route>
+            <Redirect to="/login" />
+          </Switch>
+        </main>
       </Router>
     </>
   );
