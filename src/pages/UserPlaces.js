@@ -3,6 +3,9 @@ import React from 'react';
 import css from './UserPlaces.module.css';
 import PlaceList from '../components/PlaceList';
 import PlacesHeader from '../shared/components/uiElements/PlacesHeader';
+import { useState } from 'react/cjs/react.development';
+import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
+import ErrorModal from '../shared/components/uiElements/ErrorModal';
 
 const loadedPlaces = [
   {
@@ -40,12 +43,27 @@ const loadedPlaces = [
 ];
 
 const UserPlaces = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState();
+
+
   const placeDeleteHandler = (deletedPlaceId) => {
     console.log('usunieto');
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
     <React.Fragment>
+    <ErrorModal error={error} onClear={clearError} />
+
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
       <PlacesHeader />
       <PlaceList items={loadedPlaces} onDeletedPlace={placeDeleteHandler} />
     </React.Fragment>

@@ -5,11 +5,13 @@ import Button from '../shared/components/uiElements/Button';
 import Card from '../shared/components/uiElements/Card';
 
 import css from './PlaceItem.module.css';
+import ErrorModal from '../shared/components/uiElements/ErrorModal';
 
 const PlaceItem = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [error, setError] = useState();
 
   const openMapHandler = () => setShowMap(true);
 
@@ -28,8 +30,14 @@ const PlaceItem = (props) => {
   const addToUndone = () => {
     console.log('dodane do listy do zrobienia');
   };
+
+  const clearError = () => {
+    setError(null);
+  };
   return (
     <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+
       <li className={css.placeItem}>
         <Card className={css.placeItemContent}>
           {isLoading && <LoadingSpinner asOverlay />}
@@ -51,20 +59,35 @@ const PlaceItem = (props) => {
                   onClick={addToUndone}
                   className={`${css.bolded} ${css.boldedCheck}`}
                 >
-                  <i className={`fa fa-list ${css.faList}`} aria-hidden="true"></i>
+                  <i
+                    className={`fa fa-list ${css.faList}`}
+                    aria-hidden="true"
+                  ></i>
                 </span>
-                <span onClick={addToDone} className={`${css.bolded} ${css.boldedCheck}`}>
-                  <i className={`fa fa-check ${css.faCheck}`} aria-hidden="true"></i>
+                <span
+                  onClick={addToDone}
+                  className={`${css.bolded} ${css.boldedCheck}`}
+                >
+                  <i
+                    className={`fa fa-check ${css.faCheck}`}
+                    aria-hidden="true"
+                  ></i>
                 </span>
               </p>
 
               <p className={css.boldedCheckStatus}>
                 <span>
-                  <i className={`fa fa-list ${css.faList}`} aria-hidden="true"></i>
+                  <i
+                    className={`fa fa-list ${css.faList}`}
+                    aria-hidden="true"
+                  ></i>
                 </span>
 
                 <span>
-                  <i className={`fa fa-check ${css.faCheck}`} aria-hidden="true"></i>
+                  <i
+                    className={`fa fa-check ${css.faCheck}`}
+                    aria-hidden="true"
+                  ></i>
                 </span>
               </p>
             </div>
