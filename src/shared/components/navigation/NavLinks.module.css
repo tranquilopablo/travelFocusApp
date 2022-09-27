@@ -81,3 +81,15 @@
     border: none;
   }
 }
+
+img {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.avatar a:last-child {
+  box-shadow: none;
+  background-color: rgb(255, 255, 255);
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import css from './NavLinks.module.css';
 
@@ -32,6 +32,18 @@ const NavLinks = () => {
         <li>
           <button onClick={() => setUser(false)}>WYLOGUJ</button>
         </li>
+      )}
+      {user && (
+        <div className={css.avatar}>
+          <Link to={'/ustawienia'}>
+            <img
+              src={
+                'https://images.pexels.com/photos/4095246/pexels-photo-4095246.jpeg'
+              }
+              alt=""
+            />
+          </Link>
+        </div>
       )}
     </ul>
   );
