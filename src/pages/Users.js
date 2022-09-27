@@ -1,8 +1,11 @@
 import React from 'react';
 import css from './Users.module.css';
 import UsersList from '../components/UsersList';
+import { useState } from 'react';
+import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 
 const Users = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const USERS = [
     {
       id: 'u1',
@@ -36,6 +39,11 @@ const Users = () => {
 
   return (
     <React.Fragment>
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner  />
+        </div>
+      )}
       <UsersList items={USERS} />
     </React.Fragment>
   );
