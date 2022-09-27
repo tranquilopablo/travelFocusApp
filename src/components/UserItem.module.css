@@ -2,6 +2,10 @@
   margin: 1rem;
   width: calc(25% - 2rem);
   min-width: 17.5rem;
+} 
+
+.userItem .userItemCard {
+  padding: 0;
 }
 
 .userItem a {
@@ -56,3 +60,5 @@
 .userItemCard {
   padding: 0;
 }
+
+
