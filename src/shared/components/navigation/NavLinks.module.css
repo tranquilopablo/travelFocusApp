@@ -82,7 +82,7 @@
   }
 }
 
-img {
+.image {
   border-radius: 50%;
   object-fit: cover;
   width: 2.5rem;

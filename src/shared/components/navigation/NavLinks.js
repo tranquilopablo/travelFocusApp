@@ -37,6 +37,7 @@ const NavLinks = () => {
         <div className={css.avatar}>
           <Link to={'/ustawienia'}>
             <img
+              className={css.image}
               src={
                 'https://images.pexels.com/photos/4095246/pexels-photo-4095246.jpeg'
               }
