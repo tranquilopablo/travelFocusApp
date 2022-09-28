@@ -6,6 +6,7 @@ import Card from '../shared/components/uiElements/Card';
 
 import css from './PlaceItem.module.css';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
+import Modal from '../shared/components/uiElements/Modal';
 
 const PlaceItem = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +25,11 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
   };
 
+  const confirmDeleteHandler = () => {
+    setShowConfirmModal(false);
+    console.log('usunieto');
+  };
+
   const addToDone = () => {
     console.log('dodane do zrobionych');
   };
@@ -37,7 +43,38 @@ const PlaceItem = (props) => {
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={showMap}
+        onCancel={closeMapHandler}
+        header={props.address}
+        contentClass={css.modalContent}
+        footerClass={css.modalActions}
+        footer={<Button onClick={closeMapHandler}>ZAMKNIJ</Button>}
+      >
+        <div className={css.mapContainer}>
+          {/* <Map center={props.coordinates} zoom={8} /> */}
+          <p>mapaa</p>
+        </div>
+      </Modal>
 
+      <Modal
+        show={showConfirmModal}
+        onCancel={cancelDeleteHandler}
+        header="Jesteś pewien?"
+        footerClass="place-item__modal-actions"
+        footer={
+          <React.Fragment>
+            <Button inverse onClick={cancelDeleteHandler}>
+              WRÓĆ
+            </Button>
+            <Button danger onClick={confirmDeleteHandler}>
+              USUŃ
+            </Button>
+          </React.Fragment>
+        }
+      >
+        <p>Czy chcesz trwale usunąć to miejsce?</p>
+      </Modal>
       <li className={css.placeItem}>
         <Card className={css.placeItemContent}>
           {isLoading && <LoadingSpinner asOverlay />}
@@ -97,7 +134,7 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               ZOBACZ NA MAPIE
             </Button>
-            <Button to={`/places/${props.id}`}>EDYTUJ</Button>
+            <Button to={`/miejsca/${props.id}`}>EDYTUJ</Button>
 
             <Button danger onClick={showDeleteWarningHandler}>
               USUŃ

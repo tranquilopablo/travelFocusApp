@@ -76,11 +76,11 @@
   border-top: 1px solid #ccc;
 }
 
-.place-item__modal-content {
+.modalContent {
   padding: 0;
 }
 
-.place-item__modal-actions {
+.modalActions {
   text-align: right;
 }
 
@@ -95,13 +95,13 @@
   }
 }
 
-.map-container {
+.mapContainer {
   height: 18rem;
   width: 100%;
 }
 
 @media (min-width: 1400px) {
-  .map-container {
+  .mapContainer {
     height: 28rem;
     width: 100%;
   }

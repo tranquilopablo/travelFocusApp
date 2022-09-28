@@ -1,6 +1,5 @@
 import React from 'react';
 
-import css from './UserPlaces.module.css';
 import PlaceList from '../components/PlaceList';
 import PlacesHeader from '../shared/components/uiElements/PlacesHeader';
 import { useState } from 'react/cjs/react.development';
@@ -43,9 +42,8 @@ const loadedPlaces = [
 ];
 
 const UserPlaces = () => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
-
 
   const placeDeleteHandler = (deletedPlaceId) => {
     console.log('usunieto');
@@ -57,8 +55,7 @@ const UserPlaces = () => {
 
   return (
     <React.Fragment>
-    <ErrorModal error={error} onClear={clearError} />
-
+      <ErrorModal error={error} onClear={clearError} />
       {isLoading && (
         <div className="center">
           <LoadingSpinner />
