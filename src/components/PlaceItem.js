@@ -7,6 +7,7 @@ import Card from '../shared/components/uiElements/Card';
 import css from './PlaceItem.module.css';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Modal from '../shared/components/uiElements/Modal';
+import Map from '../shared/components/uiElements/Map';
 
 const PlaceItem = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,8 +53,7 @@ const PlaceItem = (props) => {
         footer={<Button onClick={closeMapHandler}>ZAMKNIJ</Button>}
       >
         <div className={css.mapContainer}>
-          {/* <Map center={props.coordinates} zoom={8} /> */}
-          <p>mapaa</p>
+          <Map center={props.coordinates} zoom={8} />
         </div>
       </Modal>
 
