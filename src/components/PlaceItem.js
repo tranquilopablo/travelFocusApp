@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import Button from '../shared/components/uiElements/Button';
