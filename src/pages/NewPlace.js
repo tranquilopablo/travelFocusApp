@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useReducer } from 'react';
 import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Input from '../shared/components/uiElements/Input';
@@ -15,12 +15,67 @@ const NewPlace = () => {
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const inputHandler = useCallback((id, value, isValid) => {}, []);
-  const descriptionHandler = useCallback((id, value, isValid) => {}, []);
+  const formReducer = (state, action) => {
+    switch (action.type) {
+      case 'INPUT_CHANGE':
+        let formIsValid = true;
+        for (const inputId in state.inputs) {
+          if (!state.inputs[inputId]) {
+            continue;
+          }
+          if (inputId === action.inputId) {
+            formIsValid = formIsValid && action.isValid;
+          } else {
+            formIsValid = formIsValid && state.inputs[inputId].isValid;
+          }
+        }
+        return {
+          ...state,
+          inputs: {
+            ...state.inputs,
+            [action.inputId]: {
+              value: action.value,
+              isValid: action.isValid,
+            },
+          },
+          isValid: formIsValid,
+        };
+
+      default:
+        return state;
+    }
+  };
+
+  const [formState, dispatch] = useReducer(formReducer, {
+    inputs: {
+      title: {
+        value: '',
+        isValid: false,
+      },
+      description: {
+        value: '',
+        isValid: false,
+      },
+      address: {
+        value: '',
+        isValid: false,
+      },
+    },
+    isValid: false,
+  });
+
+  const inputHandler = useCallback((id, value, isValid) => {
+    dispatch({
+      type: 'INPUT_CHANGE',
+      value: value,
+      isValid: isValid,
+      inputId: id,
+    });
+  }, []);
 
   const placeSubmitHandler = (e) => {
     e.preventDefault();
-    console.log('Stworzyles nowe miejsce');
+    console.log(formState.inputs); // send to the backend
   };
 
   const clearError = () => {
@@ -47,7 +102,7 @@ const NewPlace = () => {
           label="Opis"
           validators={[VALIDATOR_MINLENGTH(5)]}
           errorText="Podaj opis miejsca ( co najmniej 5 znaków)."
-          onInput={descriptionHandler}
+          onInput={inputHandler}
         />
         <Input
           id="address"
@@ -57,7 +112,7 @@ const NewPlace = () => {
           errorText="Podaj adres miejsca."
           onInput={inputHandler}
         />
-        <Button type="submit" disabled={false}>
+        <Button type="submit" disabled={!formState.isValid}>
           DODAJ MIEJSCE
         </Button>
       </form>
