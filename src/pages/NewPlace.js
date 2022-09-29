@@ -3,6 +3,7 @@ import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Input from '../shared/components/uiElements/Input';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
+import RadioInput from '../shared/components/uiElements/RadioInput';
 import SelectForm from '../shared/components/uiElements/SelectForm';
 
 import {
@@ -16,7 +17,7 @@ const NewPlace = () => {
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectValue, setSelectValue] = useState('1');
-
+  const [radioValue, setRadioValue] = useState('1');
 
   const formReducer = (state, action) => {
     switch (action.type) {
@@ -126,6 +127,15 @@ const NewPlace = () => {
             { value: 5, label: 5 },
           ]}
           onChange={(v) => setSelectValue(v)}
+        />
+        <RadioInput
+          label="Status:"
+          onChange={(v) => setRadioValue(v)}
+          value={radioValue}
+          options={[
+            { value: '1', label: 'Publiczny' },
+            { value: '0', label: 'Prywatny' },
+          ]}
         />
         <Button type="submit" disabled={!formState.isValid}>
           DODAJ MIEJSCE
