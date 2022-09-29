@@ -76,6 +76,11 @@
   border-top: 1px solid #ccc;
 }
 
+.actions button,
+.actions a {
+  margin: 0.5rem;
+}
+
 .modalContent {
   padding: 0;
 }
@@ -84,10 +89,7 @@
   text-align: right;
 }
 
-.place-item__actions button,
-.place-item__actions a {
-  margin: 0.5rem;
-}
+
 
 @media (min-width: 768px) {
   .itemImage {

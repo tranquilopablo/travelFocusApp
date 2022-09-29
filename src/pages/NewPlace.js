@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useReducer } from 'react';
 import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
+import ImageUpload from '../shared/components/uiElements/ImageUpload';
 import Input from '../shared/components/uiElements/Input';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import RadioInput from '../shared/components/uiElements/RadioInput';
@@ -137,6 +138,7 @@ const NewPlace = () => {
             { value: '0', label: 'Prywatny' },
           ]}
         />
+        <ImageUpload center id="image" onInput={inputHandler} errorText="" />
         <Button type="submit" disabled={!formState.isValid}>
           DODAJ MIEJSCE
         </Button>
