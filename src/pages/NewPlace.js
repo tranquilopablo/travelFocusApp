@@ -3,6 +3,7 @@ import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Input from '../shared/components/uiElements/Input';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
+import SelectForm from '../shared/components/uiElements/SelectForm';
 
 import {
   VALIDATOR_MINLENGTH,
@@ -14,6 +15,8 @@ import css from './NewPlace.module.css';
 const NewPlace = () => {
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectValue, setSelectValue] = useState('1');
+
 
   const formReducer = (state, action) => {
     switch (action.type) {
@@ -111,6 +114,18 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Podaj adres miejsca."
           onInput={inputHandler}
+        />
+        <SelectForm
+          label="Ważność projektu w skali od 1-5"
+          value={selectValue}
+          options={[
+            { value: 1, label: 1 },
+            { value: 2, label: 2 },
+            { value: 3, label: 3 },
+            { value: 4, label: 4 },
+            { value: 5, label: 5 },
+          ]}
+          onChange={(v) => setSelectValue(v)}
         />
         <Button type="submit" disabled={!formState.isValid}>
           DODAJ MIEJSCE
