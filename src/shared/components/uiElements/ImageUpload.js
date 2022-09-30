@@ -43,6 +43,9 @@ const ImageUpload = (props) => {
 
   const pickImageHandler = () => {
     filePickerRef.current.click();
+    console.log("update image upload");
+    
+
   };
 
   return (

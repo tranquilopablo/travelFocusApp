@@ -84,30 +84,33 @@ const UpdatePlace = () => {
   const loadedPlace = DUMMY_PLACES.find((place) => place.id === placeId);
 
   useEffect(() => {
-    setSelectValue(loadedPlace.priority);
-    setRadioValue(loadedPlace.status);
+    if (loadedPlace) {
+      setSelectValue(loadedPlace.priority);
+      setRadioValue(loadedPlace.status);
 
-    setFormData(
-      {
-        title: {
-          value: loadedPlace.title,
-          isValid: true,
+      setFormData(
+        {
+          title: {
+            value: loadedPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: loadedPlace.description,
+            isValid: true,
+          },
+          address: {
+            value: loadedPlace.description,
+            isValid: true,
+          },
+          image: {
+            value: loadedPlace.image,
+            isValid: true,
+          },
         },
-        description: {
-          value: loadedPlace.description,
-          isValid: true,
-        },
-        address: {
-          value: loadedPlace.description,
-          isValid: true,
-        },
-        image: {
-          value: loadedPlace.image,
-          isValid: true,
-        },
-      },
-      true
-    );
+        true
+      );
+    }
+
     setIsLoading(false);
   }, [setFormData, loadedPlace, setRadioValue, setSelectValue]);
 
