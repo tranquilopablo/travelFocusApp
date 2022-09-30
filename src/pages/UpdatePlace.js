@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useReducer } from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import ImageUpload from '../shared/components/uiElements/ImageUpload';
 import Input from '../shared/components/uiElements/Input';
 import RadioInput from '../shared/components/uiElements/RadioInput';
 import SelectForm from '../shared/components/uiElements/SelectForm';
+import { useFormHook } from '../shared/hooks/useFormHook';
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
@@ -57,39 +58,8 @@ const UpdatePlace = () => {
   const [selectValue, setSelectValue] = useState('1');
   const [radioValue, setRadioValue] = useState('1');
 
-  const formReducer = (state, action) => {
-    switch (action.type) {
-      case 'INPUT_CHANGE':
-        let formIsValid = true;
-        for (const inputId in state.inputs) {
-          if (!state.inputs[inputId]) {
-            continue;
-          }
-          if (inputId === action.inputId) {
-            formIsValid = formIsValid && action.isValid;
-          } else {
-            formIsValid = formIsValid && state.inputs[inputId].isValid;
-          }
-        }
-        return {
-          ...state,
-          inputs: {
-            ...state.inputs,
-            [action.inputId]: {
-              value: action.value,
-              isValid: action.isValid,
-            },
-          },
-          isValid: formIsValid,
-        };
-
-      default:
-        return state;
-    }
-  };
-
-  const [formState, dispatch] = useReducer(formReducer, {
-    inputs: {
+  const [formState, inputHandler] = useFormHook(
+    {
       title: {
         value: '',
         isValid: false,
@@ -107,21 +77,12 @@ const UpdatePlace = () => {
         isValid: false,
       },
     },
-    isValid: false,
-  });
+    true
+  );
 
   useEffect(() => {
     setSelectValue(loadedPlace.priority);
     setRadioValue(loadedPlace.status);
-  }, []);
-
-  const inputHandler = useCallback((id, value, isValid) => {
-    dispatch({
-      type: 'INPUT_CHANGE',
-      value: value,
-      isValid: isValid,
-      inputId: id,
-    });
   }, []);
 
   const loadedPlace = DUMMY_PLACES.find((place) => place.id === placeId);
@@ -133,10 +94,10 @@ const UpdatePlace = () => {
       </div>
     );
   }
- 
 
   const placeUpdateSubmitHandler = (event) => {
     event.preventDefault();
+    console.log(formState);
   };
 
   const clearError = () => {

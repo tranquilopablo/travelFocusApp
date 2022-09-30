@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useReducer } from 'react';
+import React, { useState } from 'react';
 import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import ImageUpload from '../shared/components/uiElements/ImageUpload';
@@ -6,6 +6,7 @@ import Input from '../shared/components/uiElements/Input';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import RadioInput from '../shared/components/uiElements/RadioInput';
 import SelectForm from '../shared/components/uiElements/SelectForm';
+import { useFormHook } from '../shared/hooks/useFormHook';
 
 import {
   VALIDATOR_MINLENGTH,
@@ -20,39 +21,9 @@ const NewPlace = () => {
   const [selectValue, setSelectValue] = useState('1');
   const [radioValue, setRadioValue] = useState('1');
 
-  const formReducer = (state, action) => {
-    switch (action.type) {
-      case 'INPUT_CHANGE':
-        let formIsValid = true;
-        for (const inputId in state.inputs) {
-          if (!state.inputs[inputId]) {
-            continue;
-          }
-          if (inputId === action.inputId) {
-            formIsValid = formIsValid && action.isValid;
-          } else {
-            formIsValid = formIsValid && state.inputs[inputId].isValid;
-          }
-        }
-        return {
-          ...state,
-          inputs: {
-            ...state.inputs,
-            [action.inputId]: {
-              value: action.value,
-              isValid: action.isValid,
-            },
-          },
-          isValid: formIsValid,
-        };
-
-      default:
-        return state;
-    }
-  };
-
-  const [formState, dispatch] = useReducer(formReducer, {
-    inputs: {
+ 
+  const [formState, inputHandler] = useFormHook(
+    {
       title: {
         value: '',
         isValid: false,
@@ -70,17 +41,9 @@ const NewPlace = () => {
         isValid: false,
       },
     },
-    isValid: false,
-  });
-
-  const inputHandler = useCallback((id, value, isValid) => {
-    dispatch({
-      type: 'INPUT_CHANGE',
-      value: value,
-      isValid: isValid,
-      inputId: id,
-    });
-  }, []);
+    false
+  );
+ 
 
   const placeSubmitHandler = (e) => {
     e.preventDefault();
