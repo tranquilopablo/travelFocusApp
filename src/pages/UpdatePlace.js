@@ -3,9 +3,11 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Button from '../shared/components/uiElements/Button';
+import Card from '../shared/components/uiElements/Card';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import ImageUpload from '../shared/components/uiElements/ImageUpload';
 import Input from '../shared/components/uiElements/Input';
+import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import RadioInput from '../shared/components/uiElements/RadioInput';
 import SelectForm from '../shared/components/uiElements/SelectForm';
 import { useFormHook } from '../shared/hooks/useFormHook';
@@ -54,11 +56,11 @@ const DUMMY_PLACES = [
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
   const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectValue, setSelectValue] = useState('1');
   const [radioValue, setRadioValue] = useState('1');
 
-  const [formState, inputHandler] = useFormHook(
+  const [formState, inputHandler, setFormData] = useFormHook(
     {
       title: {
         value: '',
@@ -79,21 +81,35 @@ const UpdatePlace = () => {
     },
     true
   );
+  const loadedPlace = DUMMY_PLACES.find((place) => place.id === placeId);
 
   useEffect(() => {
     setSelectValue(loadedPlace.priority);
     setRadioValue(loadedPlace.status);
-  }, []);
 
-  const loadedPlace = DUMMY_PLACES.find((place) => place.id === placeId);
-
-  if (!loadedPlace) {
-    return (
-      <div className="center">
-        <h2>Nie można znależć miejsca!</h2>
-      </div>
+    setFormData(
+      {
+        title: {
+          value: loadedPlace.title,
+          isValid: true,
+        },
+        description: {
+          value: loadedPlace.description,
+          isValid: true,
+        },
+        address: {
+          value: loadedPlace.description,
+          isValid: true,
+        },
+        image: {
+          value: loadedPlace.image,
+          isValid: true,
+        },
+      },
+      true
     );
-  }
+    setIsLoading(false);
+  }, [setFormData, loadedPlace, setRadioValue, setSelectValue]);
 
   const placeUpdateSubmitHandler = (event) => {
     event.preventDefault();
@@ -107,6 +123,24 @@ const UpdatePlace = () => {
   const handleGoBack = () => {
     console.log('Wrociles do poprzedniej strony');
   };
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!loadedPlace && !error) {
+    return (
+      <div className="center">
+        <Card style={{ backgroundColor: 'white' }}>
+          <h2>Nie można znależć miejsca!</h2>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -165,7 +199,13 @@ const UpdatePlace = () => {
               { value: '0', label: 'Prywatny' },
             ]}
           />
-          <ImageUpload center id="image" onInput={inputHandler} errorText="" />
+          <ImageUpload
+            center
+            id="image"
+            onInput={inputHandler}
+            errorText=""
+            initialValue={loadedPlace.image}
+          />
           <Button type="submit" disabled={!formState.isValid}>
             AKTUALIZUJ MIEJSCE
           </Button>

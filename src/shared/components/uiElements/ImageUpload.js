@@ -5,7 +5,7 @@ import Button from './Button';
 
 const ImageUpload = (props) => {
   const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState();
+  const [previewUrl, setPreviewUrl] = useState(props.initialValue && props.initialValue );
   const [isValid, setIsValid] = useState(false);
 
   const filePickerRef = useRef();
@@ -14,6 +14,10 @@ const ImageUpload = (props) => {
     if (!file) {
       return;
     }
+    // if (props.initialValue) {
+    //   setPreviewUrl(props.initialValue);
+    //   console.log(props.initialValue);
+    // }
     const fileReader = new FileReader();
     fileReader.onload = () => {
       setPreviewUrl(fileReader.result);
@@ -51,7 +55,7 @@ const ImageUpload = (props) => {
         accept=".jpg,.png,.jpeg"
         onChange={pickedHandler}
       />
-      <div className={`${props.center && css['image-upload-center']}`} >
+      <div className={`${props.center && css['image-upload-center']}`}>
         <div className={css['image-upload__preview']}>
           {previewUrl && <img src={previewUrl} alt="Preview" />}
           {!previewUrl && <p>Proszę wybierz zdjęcie do 2MB.</p>}
