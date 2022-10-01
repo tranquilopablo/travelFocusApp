@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -12,10 +12,36 @@ import Settings from './pages/Settings';
 import UserPlaces from './pages/UserPlaces';
 import NewPlace from './pages/NewPlace';
 import UpdatePlace from './pages/UpdatePlace';
+import { AuthContext } from './shared/context/auth-context';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const auth = useContext(AuthContext);
+
+  const login = useCallback(() => {
+    setIsLoggedIn(true);
+    localStorage.setItem(
+      'userData',
+      JSON.stringify({
+        user: auth.user,
+      })
+    );
+  }, []);
+
+  const logout = useCallback(() => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('userData');
+  }, []);
+
   return (
-    <>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: auth.isLoggedIn,
+        user: auth.user,
+        login: login,
+        logout: logout,
+      }}
+    >
       <Router>
         <MainNavigation />
         <main>
@@ -42,7 +68,7 @@ function App() {
           </Switch>
         </main>
       </Router>
-    </>
+    </AuthContext.Provider>
   );
 }
 

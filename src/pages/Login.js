@@ -37,6 +37,9 @@ const Auth = () => {
     false
   );
 
+
+
+
   const switchModeHandler = () => {
     if (!isLoginMode) {
       setFormData(
