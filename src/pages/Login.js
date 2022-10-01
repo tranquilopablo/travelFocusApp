@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { AuthContext } from '../shared/context/auth-context';
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -18,6 +19,8 @@ import css from './Login.module.css';
 
 const Auth = () => {
   const history = useHistory();
+  const auth = useContext(AuthContext);
+
 
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [error, setError] = useState(false);
@@ -71,8 +74,11 @@ const Auth = () => {
 
     if (isLoginMode) {
       console.log('Zalogowano!');
+      auth.login()
     } else {
       console.log('Rejestracja udana!');
+      auth.login()
+
     }
   };
 

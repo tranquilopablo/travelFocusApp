@@ -33,10 +33,49 @@ function App() {
     localStorage.removeItem('userData');
   }, []);
 
+  let routes;
+  if (isLoggedIn) {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          <Users />
+        </Route>
+        <Route path="/ustawienia">
+          <Settings />
+        </Route>
+        <Route path="/:userId/miejsca" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/miejsca/nowe" exact>
+          <NewPlace />
+        </Route>
+        <Route path="/miejsca/:placeId">
+          <UpdatePlace />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    );
+  } else {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          <Users />
+        </Route>
+        <Route path="/:userId/miejsca" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Redirect to="/login" />
+      </Switch>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: auth.isLoggedIn,
+        isLoggedIn: isLoggedIn,
         user: auth.user,
         login: login,
         logout: logout,
@@ -45,27 +84,7 @@ function App() {
       <Router>
         <MainNavigation />
         <main>
-          <Switch>
-            <Route path="/" exact>
-              <Users />
-            </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
-            <Route path="/ustawienia">
-              <Settings />
-            </Route>
-            <Route path="/:userId/miejsca">
-              <UserPlaces />
-            </Route>
-            <Route path="/miejsca/nowe">
-              <NewPlace />
-            </Route>
-            <Route path="/miejsca/:placeId">
-              <UpdatePlace />
-            </Route>
-            <Redirect to="/login" />
-          </Switch>
+         {routes}
         </main>
       </Router>
     </AuthContext.Provider>

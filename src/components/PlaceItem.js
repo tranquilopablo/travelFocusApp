@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import Button from '../shared/components/uiElements/Button';
@@ -8,12 +8,14 @@ import css from './PlaceItem.module.css';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Modal from '../shared/components/uiElements/Modal';
 import Map from '../shared/components/uiElements/Map';
+import { AuthContext } from '../shared/context/auth-context';
 
 const PlaceItem = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [error, setError] = useState();
+  const auth = useContext(AuthContext);
 
   const openMapHandler = () => setShowMap(true);
 
@@ -90,27 +92,29 @@ const PlaceItem = (props) => {
                 Priorytet: <span className={css.bolded}>{props.priority}</span>
               </p>
 
-              <p>
-                Dodaj do:
-                <span
-                  onClick={addToUndone}
-                  className={`${css.bolded} ${css.boldedCheck}`}
-                >
-                  <i
-                    className={`fa fa-list ${css.faList}`}
-                    aria-hidden="true"
-                  ></i>
-                </span>
-                <span
-                  onClick={addToDone}
-                  className={`${css.bolded} ${css.boldedCheck}`}
-                >
-                  <i
-                    className={`fa fa-check ${css.faCheck}`}
-                    aria-hidden="true"
-                  ></i>
-                </span>
-              </p>
+              {auth.isLoggedIn && (
+                <p>
+                  Dodaj do:
+                  <span
+                    onClick={addToUndone}
+                    className={`${css.bolded} ${css.boldedCheck}`}
+                  >
+                    <i
+                      className={`fa fa-list ${css.faList}`}
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                  <span
+                    onClick={addToDone}
+                    className={`${css.bolded} ${css.boldedCheck}`}
+                  >
+                    <i
+                      className={`fa fa-check ${css.faCheck}`}
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                </p>
+              )}
 
               <p className={css.boldedCheckStatus}>
                 <span>
@@ -134,11 +138,14 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               ZOBACZ NA MAPIE
             </Button>
-            <Button to={`/miejsca/${props.id}`}>EDYTUJ</Button>
-
-            <Button danger onClick={showDeleteWarningHandler}>
-              USUŃ
-            </Button>
+            {auth.isLoggedIn && (
+              <Button to={`/miejsca/${props.id}`}>EDYTUJ</Button>
+            )}
+            {auth.isLoggedIn && (
+              <Button danger onClick={showDeleteWarningHandler}>
+                USUŃ
+              </Button>
+            )}
           </div>
         </Card>
       </li>

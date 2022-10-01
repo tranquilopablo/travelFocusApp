@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { AuthContext } from '../../context/auth-context';
 
 import css from './NavLinks.module.css';
 
 const NavLinks = () => {
-  const [user, setUser] = useState(true);
+  const auth = useContext(AuthContext);
 
   return (
     <ul className={css.navLinks}>
@@ -13,27 +14,27 @@ const NavLinks = () => {
           UŻYTKOWNICY
         </NavLink>
       </li>
-      {user && (
+      {auth.isLoggedIn && (
         <li>
           <NavLink to={`/:userId/miejsca`}>MOJE MIEJSCA</NavLink>
         </li>
       )}
-      {user && (
+      {auth.isLoggedIn && (
         <li>
           <NavLink to="/miejsca/nowe">DODAJ MIEJSCE</NavLink>
         </li>
       )}
-      {!user && (
+      {!auth.isLoggedIn && (
         <li>
           <NavLink to="/login">ZALOGUJ</NavLink>
         </li>
       )}
-      {user && (
+      {auth.isLoggedIn && (
         <li>
-          <button onClick={() => setUser(false)}>WYLOGUJ</button>
+          <button onClick={auth.logout}>WYLOGUJ</button>
         </li>
       )}
-      {user && (
+      {auth.isLoggedIn && (
         <div className={css.avatar}>
           <Link to={'/ustawienia'}>
             <img
