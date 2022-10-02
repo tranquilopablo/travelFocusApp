@@ -15,7 +15,7 @@ import UpdatePlace from './pages/UpdatePlace';
 import { AuthContext } from './shared/context/auth-context';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const auth = useContext(AuthContext);
 
   const login = useCallback(() => {
