@@ -10,12 +10,13 @@
 
 # production
 /build
+nodemon.json
+
 
 
 
 #files
 /images
-nodemon.json
 
 misc
 .DS_Store

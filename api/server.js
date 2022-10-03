@@ -12,10 +12,26 @@ app.use(bodyParser.json());
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
 
+app.use((req, res, next) => {
+  const error = new Error('Could not find this route');
+  error.code = 404;
+  throw error;
+});
+
+// middleware for handling errors in express
+app.use((error, req, res, next) => {
+  if (res.headerSent) {
+    return next(error);
+  }
+  res.status(error.code || 500);
+  res.json({ message: error.message || 'An unknown error occured!' });
+});
+
 mongoose
-  .connect(
-    `mongodb+srv://blunt17:bundy17@pawel.vs6xb.mongodb.net/travelFocusApp?retryWrites=true&w=majority`
-  )
+mongoose
+.connect(
+  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@pawel.vs6xb.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+)
   .then(() => {
     app.listen(5000, () => {
       console.log('Backend is runningg');
