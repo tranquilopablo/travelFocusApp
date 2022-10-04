@@ -101,8 +101,51 @@ router.post(
   }
 );
 
+////////////////////////////////////////////////////////////////////////
 // LOGIN
-router.post('/login', async (req, res, next) => {});
+router.post('/login', async (req, res, next) => {
+  const { email, password } = req.body;
+
+  let existingUser;
+
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (err) {
+    const error = new Error('Logowanie się nie udało, proszę spróbuj ponownie');
+    error.code = 500;
+    return next(error);
+  }
+
+  if (!existingUser) {
+    const error = new Error('Podane dane do logowania są nieprawidłowe ');
+    error.code = 403;
+    return next(error);
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    const error = new Error('Nie można zalogować, sprawdż poprawność danych.');
+    error.code = 500;
+    return next(error);
+  }
+  if (!isValidPassword) {
+    const error = new Error('Nie można zalogować, sprawdż poprawność danych.');
+    error.code = 403;
+    return next(error);
+  }
+
+  const userObject = existingUser.toObject({ getters: true });
+
+  res.json({
+    user: {
+      userId: userObject.id,
+      email: userObject.email,
+      image: userObject.image,
+    },
+  });
+});
 
 //UPDATE USER
 router.patch('/:uid', async (req, res, next) => {});
