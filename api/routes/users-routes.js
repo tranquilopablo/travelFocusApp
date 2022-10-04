@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
 const User = require('../models/user');
+const Place = require('../models/place');
 
 /////////////////////////////////////////////////////////////////
 // GET ALL USERS
@@ -146,7 +147,7 @@ router.post('/login', async (req, res, next) => {
     },
   });
 });
-
+////////////////////////////////////////////////////////////////////////
 //UPDATE USER
 router.patch('/:uid', async (req, res, next) => {
   const errors = validationResult(req);
@@ -206,8 +207,41 @@ router.patch('/:uid', async (req, res, next) => {
     },
   });
 });
-
+//////////////////////////////////////////////////////////////////////////
 //DELETE USER
-router.patch('/:uid', async (req, res, next) => {});
+router.delete('/:uid', async (req, res, next) => {
+  const userId = req.params.uid;
+
+  let user;
+  try {
+    user = await User.findById(userId).populate('places');
+  } catch (err) {
+    const error = new Error('Something went wrong,could not delete user.');
+    error.code = 500;
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new Error('Could not find user for this id');
+    error.code = 404;
+    return next(error);
+  }
+
+  // here it would be good to check whether we are allowed to update user
+  //  if (updatedUser.toObject({ getters: true }).id !== userId ;
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await user.remove({ session: sess });
+    await Place.deleteMany({ creator: userId }).session(sess);
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new Error('Something went wrong, could not delete place');
+    error.code = 500;
+    return next(error);
+  }
+  res.status(200).json({ message: 'Deleted user' });
+});
 
 module.exports = router;
