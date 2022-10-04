@@ -148,7 +148,64 @@ router.post('/login', async (req, res, next) => {
 });
 
 //UPDATE USER
-router.patch('/:uid', async (req, res, next) => {});
+router.patch('/:uid', async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Invalid inputs passed, please check your data.');
+    error.code = 422;
+    return next(error);
+  }
+
+  const { name, email, password } = req.body;
+  const userId = req.params.uid;
+
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    const error = new Error('Could not update user, please try again');
+    error.code = 500;
+    return next(error);
+  }
+
+  let updatedUser;
+  try {
+    updatedUser = await User.findById(userId);
+  } catch (err) {
+    const error = new Error('Something went wrong,could not update user.');
+    error.code = 500;
+    return next(error);
+  }
+
+  // here it would be good to check whether we are allowed to update user
+  //  if (updatedUser.toObject({ getters: true }).id !== userId ;
+
+  updatedUser.name = name;
+  updatedUser.email = email;
+  updatedUser.password = hashedPassword;
+  updatedUser.image =
+    'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg';
+
+  try {
+    await updatedUser.save();
+  } catch (err) {
+    const error = new Error('Something went wrong,could not update user.');
+    error.code = 500;
+    return next(error);
+  }
+
+  const userObject = updatedUser.toObject({ getters: true });
+
+  res.status(200).res.json({
+    user: {
+      userId: userObject.id,
+      email: userObject.email,
+      image: userObject.image,
+    },
+  });
+});
 
 //DELETE USER
 router.patch('/:uid', async (req, res, next) => {});
