@@ -11,7 +11,7 @@ const placeSchema = new Schema({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
   },
-  creator: { type: String, required: true },
+  creator: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
   priority: { type: String, required: true },
   status: { type: String, required: true },
   done: { type: Boolean, required: true },
