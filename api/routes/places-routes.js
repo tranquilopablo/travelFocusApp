@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { check } = require('express-validator');
+const { check, validationResult } = require('express-validator');
+
 const getCoordsForAddress = require('../util/location');
-const { validationResult } = require('express-validator');
 const Place = require('../models/place');
 const User = require('../models/user');
 

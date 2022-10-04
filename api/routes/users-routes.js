@@ -1,13 +1,105 @@
 const express = require('express');
 const router = express.Router();
+const { check, validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
 
+const User = require('../models/user');
+
+/////////////////////////////////////////////////////////////////
 // GET ALL USERS
-router.get('/',async (req, res, next) => {
-  return res.json({ message: 'It worksss' });
+router.get('/', async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, '-password');
+  } catch (err) {
+    const error = new Error("'Fetching users failed,please try again later.'");
+    error.code = 500;
+    return next(error);
+  }
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 });
 
+////////////////////////////////////////////////////////////////////
 // REGISTER
-router.post('/signup', async (req, res, next) => {});
+router.post(
+  '/signup',
+  [
+    check('name').not().isEmpty(),
+    check('email').normalizeEmail().isEmail(),
+    check('password').isLength({ min: 6 }),
+  ],
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error(
+        'Nieprawidłowe dane przeszły, proszę sprawdż dane.'
+      );
+      error.code = 422;
+      return next(error);
+    }
+
+    const { name, email, password } = req.body;
+
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ email: email });
+    } catch (err) {
+      const error = new Error(
+        'Rejestracja się nie udała, proszę spróbuj ponownie'
+      );
+      error.code = 500;
+      return next(error);
+    }
+
+    if (existingUser) {
+      const error = new Error(
+        'Użytkownik o podanym emailu już istnieje. Proszę zaloguj się w takim razie. '
+      );
+      error.code = 422;
+      return next(error);
+    }
+
+    let hashedPassword;
+
+    try {
+      hashedPassword = await bcrypt.hash(password, 12);
+    } catch (err) {
+      const error = new Error('Could not create user, please try again');
+      error.code = 500;
+      return next(error);
+    }
+
+    const createdUser = new User({
+      name,
+      email,
+      image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
+      password: hashedPassword,
+      places: [],
+    });
+
+    try {
+      await createdUser.save();
+    } catch (err) {
+      const error = new Error(
+        'Rejestracja się nie udała, proszę spróbuj ponownie.'
+      );
+      error.code = 500;
+      return next(error);
+    }
+
+    const userObject = createdUser.toObject({ getters: true });
+
+    res.status(201).json({
+      user: {
+        userId: userObject.id,
+        email: userObject.email,
+        image: userObject.image,
+      },
+    });
+  }
+);
 
 // LOGIN
 router.post('/login', async (req, res, next) => {});

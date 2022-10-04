@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
+
 
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -8,6 +10,8 @@ const usersRoutes = require('./routes/users-routes');
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use('/images', express.static(path.join(__dirname, '/images')));
 
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
