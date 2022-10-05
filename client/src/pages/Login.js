@@ -17,10 +17,9 @@ import Card from '../shared/components/uiElements/Card';
 
 import css from './Login.module.css';
 
-const Auth = () => {
+const Login = () => {
   const history = useHistory();
   const auth = useContext(AuthContext);
-
 
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [error, setError] = useState(false);
@@ -39,9 +38,6 @@ const Auth = () => {
     },
     false
   );
-
-
-
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
@@ -73,12 +69,42 @@ const Auth = () => {
     e.preventDefault();
 
     if (isLoginMode) {
-      console.log('Zalogowano!');
-      auth.login()
-    } else {
-      console.log('Rejestracja udana!');
-      auth.login()
+      try {
+        const response = await fetch('http://localhost:5000/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+        const responseData = await response.json();
+        console.log(responseData);
+      } catch (e) {}
 
+      console.log('Zalogowano!');
+      // auth.login()
+    } else {
+      try {
+        const response = await fetch('http://localhost:5000/api/users/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+        const responseData = await response.json();
+        console.log(responseData);
+      } catch (err) {}
+
+      console.log('Rejestracja udana!');
+      // auth.login();
     }
   };
 
@@ -143,4 +169,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Login;

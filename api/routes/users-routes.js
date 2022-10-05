@@ -35,7 +35,7 @@ router.post(
 
     if (!errors.isEmpty()) {
       const error = new Error(
-        'Nieprawidłowe dane przeszły, proszę sprawdż dane.'
+        'Nieprawidłowe dane przeszły, proszę sprawdź dane.'
       );
       error.code = 422;
       return next(error);
@@ -90,13 +90,12 @@ router.post(
       return next(error);
     }
 
-    const userObject = createdUser.toObject({ getters: true });
-
+ 
     res.status(201).json({
       user: {
-        userId: userObject.id,
-        email: userObject.email,
-        image: userObject.image,
+        userId: createdUser.id,
+        email: createdUser.email,
+        image: createdUser.image,
       },
     });
   }

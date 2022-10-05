@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
 
@@ -12,6 +11,17 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/images', express.static(path.join(__dirname, '/images')));
+
+// for handling CORS error
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  next();
+});
 
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
@@ -31,11 +41,11 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occured!' });
 });
 
+mongoose;
 mongoose
-mongoose
-.connect(
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@pawel.vs6xb.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
-)
+  .connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@pawel.vs6xb.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+  )
   .then(() => {
     app.listen(5000, () => {
       console.log('Backend is runningg');
