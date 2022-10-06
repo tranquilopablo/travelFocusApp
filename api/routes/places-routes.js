@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const fs = require('fs');
+
 
 const getCoordsForAddress = require('../util/location');
 const Place = require('../models/place');
 const User = require('../models/user');
+const fileUpload = require("../middleware/file-upload")
 
 ///////////////////////////////////////////////////////////////////////////////
 // GET PLACE BY PLACE ID
@@ -49,6 +52,7 @@ router.get('/user/:uid', async (req, res, next) => {
 // CREATE PLACE
 router.post(
   '/',
+  fileUpload.single('image'),
   [
     check('title').not().isEmpty(),
     check('description').isLength({ min: 5 }),
@@ -77,8 +81,7 @@ router.post(
       description,
       address,
       location: coordinates,
-      image:
-        ' https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/EmpireStateNewYokCity.jpg/1920px-EmpireStateNewYokCity.jpg?1656719969604',
+      image: req.file.path,
       creator,
       priority,
       status,
@@ -156,8 +159,7 @@ router.patch(
     updatedPlace.title = title;
     updatedPlace.description = description;
     updatedPlace.address = address;
-    updatedPlace.image =
-      ' https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/EmpireStateNewYokCity.jpg/1920px-EmpireStateNewYokCity.jpg?1656719969604';
+    updatedPlace.image = req.file.path,
     updatedPlace.location = coordinates;
     updatedPlace.priority = priority;
     updatedPlace.status = status;
@@ -197,6 +199,8 @@ router.delete('/:pid', async (req, res, next) => {
   // here it would be good to check whether we are allowed to delete place
   //  if (place.creator.id !== req.userId)
 
+  const imagePath = place.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -209,6 +213,10 @@ router.delete('/:pid', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
+    
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: 'Deleted place' });
 });

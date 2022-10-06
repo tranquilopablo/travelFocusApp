@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
+const fs = require('fs');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
+
+const fileUpload = require("../middleware/file-upload")
 const User = require('../models/user');
 const Place = require('../models/place');
 
@@ -25,6 +29,7 @@ router.get('/', async (req, res, next) => {
 // REGISTER
 router.post(
   '/signup',
+  fileUpload.single('image'),
   [
     check('name').not().isEmpty(),
     check('email').normalizeEmail().isEmail(),
@@ -75,7 +80,7 @@ router.post(
     const createdUser = new User({
       name,
       email,
-      image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
+      image: req.file.path,
       password: hashedPassword,
       places: [],
     });
@@ -185,8 +190,7 @@ router.patch('/:uid', async (req, res, next) => {
   updatedUser.name = name;
   updatedUser.email = email;
   updatedUser.password = hashedPassword;
-  updatedUser.image =
-    'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg';
+  updatedUser.image = req.file.path
 
   try {
     await updatedUser.save();
@@ -229,6 +233,8 @@ router.delete('/:uid', async (req, res, next) => {
   // here it would be good to check whether we are allowed to update user
   //  if (updatedUser.toObject({ getters: true }).id !== userId ;
 
+  const imagePath = user.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -240,6 +246,11 @@ router.delete('/:uid', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
+
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
+  
   res.status(200).json({ message: 'Deleted user' });
 });
 
