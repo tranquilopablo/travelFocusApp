@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const fs = require('fs');
+const mongoose = require('mongoose');
 
+const fs = require('fs');
 
 const getCoordsForAddress = require('../util/location');
 const Place = require('../models/place');
 const User = require('../models/user');
-const fileUpload = require("../middleware/file-upload")
+const fileUpload = require('../middleware/file-upload');
 
 ///////////////////////////////////////////////////////////////////////////////
 // GET PLACE BY PLACE ID
@@ -68,7 +69,6 @@ router.post(
     }
 
     const { title, description, address, creator, priority, status } = req.body;
-    console.log(req.body);
 
     let coordinates;
     try {
@@ -107,7 +107,7 @@ router.post(
       const sess = await mongoose.startSession();
       sess.startTransaction();
       await createdPlace.save({ session: sess });
-      user.places.push(createdPlace); // pushes mongo id, not object (because we connected models)
+      user.places.push(createdPlace);
       await user.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
@@ -159,8 +159,7 @@ router.patch(
     updatedPlace.title = title;
     updatedPlace.description = description;
     updatedPlace.address = address;
-    updatedPlace.image = req.file.path,
-    updatedPlace.location = coordinates;
+    (updatedPlace.image = req.file.path), (updatedPlace.location = coordinates);
     updatedPlace.priority = priority;
     updatedPlace.status = status;
     updatedPlace.done = done;
@@ -213,7 +212,7 @@ router.delete('/:pid', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-    
+
   fs.unlink(imagePath, (err) => {
     console.log(err);
   });

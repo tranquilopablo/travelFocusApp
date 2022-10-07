@@ -6,9 +6,7 @@ import css from './NavLinks.module.css';
 
 const NavLinks = () => {
   const auth = useContext(AuthContext);
-  // console.log(auth.user.userId);
-  // console.log(auth.user.image);
-  console.log(auth);
+  
 
   return (
     <ul className={css.navLinks}>

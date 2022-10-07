@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import ImageUpload from '../shared/components/uiElements/ImageUpload';
@@ -7,6 +9,8 @@ import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import RadioInput from '../shared/components/uiElements/RadioInput';
 import SelectForm from '../shared/components/uiElements/SelectForm';
 import { useFormHook } from '../shared/hooks/useFormHook';
+import { useHttpClient } from '../shared/hooks/http-hook';
+import { AuthContext } from '../shared/context/auth-context';
 
 import {
   VALIDATOR_MINLENGTH,
@@ -16,12 +20,12 @@ import {
 import css from './NewPlace.module.css';
 
 const NewPlace = () => {
-  const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const auth = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [selectValue, setSelectValue] = useState('1');
   const [radioValue, setRadioValue] = useState('1');
+  const history = useHistory();
 
- 
   const [formState, inputHandler] = useFormHook(
     {
       title: {
@@ -43,15 +47,22 @@ const NewPlace = () => {
     },
     false
   );
- 
 
-  const placeSubmitHandler = (e) => {
+  const placeSubmitHandler = async (e) => {
     e.preventDefault();
     console.log(formState.inputs); // send to the backend
-  };
-
-  const clearError = () => {
-    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append('title', formState.inputs.title.value);
+      formData.append('description', formState.inputs.description.value);
+      formData.append('address', formState.inputs.address.value);
+      formData.append('creator', auth.user.userId);
+      formData.append('image', formState.inputs.image.value);
+      formData.append('priority', selectValue);
+      formData.append('status', radioValue);
+      await sendRequest('http://localhost:5000/api/places', 'POST', formData);
+      history.push('/');
+    } catch (err) {}
   };
 
   return (
