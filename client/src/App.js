@@ -15,22 +15,36 @@ import UpdatePlace from './pages/UpdatePlace';
 import { AuthContext } from './shared/context/auth-context';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const auth = useContext(AuthContext);
 
-  const login = useCallback(() => {
-    setIsLoggedIn(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(auth.user ? true : false);
+  // const [userId, setUserId] = useState(auth.userId);
+  // const [userPic, setUserPic] = useState(auth.userPic);
+  const [user, setUser] = useState(auth.user);
+
+  console.log(auth);
+  console.log(user);
+
+  const login = useCallback((userData) => {
     localStorage.setItem(
       'userData',
       JSON.stringify({
-        user: auth.user,
+        userId: userData.userId,
+        image: userData.image,
       })
     );
+
+    setUser(userData);
+    setIsLoggedIn(true);
+
+    // setUserId(userData.userId);
+    // setUserPic(userData.image);
   }, []);
 
   const logout = useCallback(() => {
-    setIsLoggedIn(false);
     localStorage.removeItem('userData');
+    setIsLoggedIn(false);
+    setUser(null);
   }, []);
 
   let routes;
@@ -72,20 +86,21 @@ function App() {
     );
   }
 
+  // userId: userId,
+  //       userPic: userPic,
+
   return (
     <AuthContext.Provider
       value={{
         isLoggedIn: isLoggedIn,
-        user: auth.user,
+        user: user,
         login: login,
         logout: logout,
       }}
     >
       <Router>
         <MainNavigation />
-        <main>
-         {routes}
-        </main>
+        <main>{routes}</main>
       </Router>
     </AuthContext.Provider>
   );

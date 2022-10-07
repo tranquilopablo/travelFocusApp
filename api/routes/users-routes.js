@@ -6,8 +6,7 @@ const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
-
-const fileUpload = require("../middleware/file-upload")
+const fileUpload = require('../middleware/file-upload');
 const User = require('../models/user');
 const Place = require('../models/place');
 
@@ -95,13 +94,10 @@ router.post(
       return next(error);
     }
 
- 
     res.status(201).json({
-      user: {
-        userId: createdUser.id,
-        email: createdUser.email,
-        image: createdUser.image,
-      },
+      userId: createdUser.id,
+      email: createdUser.email,
+      image: createdUser.image,
     });
   }
 );
@@ -144,11 +140,9 @@ router.post('/login', async (req, res, next) => {
   const userObject = existingUser.toObject({ getters: true });
 
   res.json({
-    user: {
-      userId: userObject.id,
-      email: userObject.email,
-      image: userObject.image,
-    },
+    userId: userObject.id,
+    email: userObject.email,
+    image: userObject.image,
   });
 });
 ////////////////////////////////////////////////////////////////////////
@@ -190,7 +184,7 @@ router.patch('/:uid', async (req, res, next) => {
   updatedUser.name = name;
   updatedUser.email = email;
   updatedUser.password = hashedPassword;
-  updatedUser.image = req.file.path
+  updatedUser.image = req.file.path;
 
   try {
     await updatedUser.save();
@@ -250,7 +244,7 @@ router.delete('/:uid', async (req, res, next) => {
   fs.unlink(imagePath, (err) => {
     console.log(err);
   });
-  
+
   res.status(200).json({ message: 'Deleted user' });
 });
 

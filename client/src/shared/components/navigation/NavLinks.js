@@ -6,6 +6,9 @@ import css from './NavLinks.module.css';
 
 const NavLinks = () => {
   const auth = useContext(AuthContext);
+  // console.log(auth.user.userId);
+  // console.log(auth.user.image);
+  console.log(auth);
 
   return (
     <ul className={css.navLinks}>
@@ -16,7 +19,7 @@ const NavLinks = () => {
       </li>
       {auth.isLoggedIn && (
         <li>
-          <NavLink to={`/:userId/miejsca`}>MOJE MIEJSCA</NavLink>
+          <NavLink to={`/${auth.user.userId}/miejsca`}>MOJE MIEJSCA</NavLink>
         </li>
       )}
       {auth.isLoggedIn && (
@@ -39,9 +42,7 @@ const NavLinks = () => {
           <Link to={'/ustawienia'}>
             <img
               className={css.image}
-              src={
-                'https://images.pexels.com/photos/4095246/pexels-photo-4095246.jpeg'
-              }
+              src={`http://localhost:5000/${auth.user.image}`}
               alt=""
             />
           </Link>

@@ -8,6 +8,7 @@ import {
   VALIDATOR_REQUIRE,
 } from '../shared/util/validators';
 import { useFormHook } from '../shared/hooks/useFormHook';
+import { useHttpClient } from '../shared/hooks/http-hook';
 import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import ImageUpload from '../shared/components/uiElements/ImageUpload';
@@ -20,10 +21,8 @@ import css from './Login.module.css';
 const Login = () => {
   const history = useHistory();
   const auth = useContext(AuthContext);
-
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [formState, inputHandler, setFormData] = useFormHook(
     {
@@ -41,6 +40,7 @@ const Login = () => {
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
+      // isLoginMode still has old value, we change it at the end of the function
       setFormData(
         { ...formState.inputs, name: undefined, image: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
@@ -70,46 +70,38 @@ const Login = () => {
 
     if (isLoginMode) {
       try {
-        const response = await fetch('http://localhost:5000/api/users/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/users/login',
+          'POST',
+          JSON.stringify({
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-        });
-        const responseData = await response.json();
-        console.log(responseData);
-      } catch (e) {}
+          {
+            'Content-Type': 'application/json',
+          }
+        );
 
-      console.log('Zalogowano!');
-      // auth.login()
+        auth.login(responseData);
+        history.push(`/${responseData.userId}/places`);
+      } catch (e) {}
     } else {
       try {
-        const response = await fetch('http://localhost:5000/api/users/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-        });
-        const responseData = await response.json();
-        console.log(responseData);
+        // with FormData we don't need to add application/json because req contain it allready
+        const formData = new FormData();
+        formData.append('email', formState.inputs.email.value);
+        formData.append('name', formState.inputs.name.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/users/signup',
+          'POST',
+          formData
+        );
+
+        auth.login(responseData);
       } catch (err) {}
-
-      console.log('Rejestracja udana!');
-      // auth.login();
     }
-  };
-
-  const clearError = () => {
-    setError(null);
   };
 
   return (
