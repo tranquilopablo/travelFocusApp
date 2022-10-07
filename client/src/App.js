@@ -66,6 +66,11 @@ function App() {
         <Route path="/miejsca/:placeId">
           <UpdatePlace />
         </Route>
+        <Redirect
+          exact
+          from="/some-route/reload"
+          to={`/${auth.user.userId}/places`}
+        />
         <Redirect to="/" />
       </Switch>
     );

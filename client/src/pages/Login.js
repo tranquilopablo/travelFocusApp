@@ -81,9 +81,11 @@ const Login = () => {
             'Content-Type': 'application/json',
           }
         );
+        console.log(responseData.userId);
 
         auth.login(responseData);
-        history.push(`/${responseData.userId}/places`);
+        // history.push(`/${responseData.userId}/places`);
+        history.push(`/`);
       } catch (e) {}
     } else {
       try {

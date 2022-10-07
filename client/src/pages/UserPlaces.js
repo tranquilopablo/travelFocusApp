@@ -1,56 +1,84 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 
 import PlaceList from '../components/PlaceList';
 import PlacesHeader from '../shared/components/uiElements/PlacesHeader';
-import { useState } from 'react/cjs/react.development';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
-
-const loadedPlaces = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/EmpireStateNewYokCity.jpg/1920px-EmpireStateNewYokCity.jpg?1654820333654',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9856644,
-    },
-    creator: 'u1',
-    priority: '5',
-    status: '1',
-    done: false,
-  },
-  {
-    id: 'p2',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/c/c7/Empire_State_Building_from_the_Top_of_the_Rock.jpg?1654818945759',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9856644,
-    },
-    creator: 'u2',
-    priority: '4',
-    status: '0',
-    done: true,
-  },
-];
+import { useHttpClient } from '../shared/hooks/http-hook';
+import { AuthContext } from '../shared/context/auth-context';
 
 const UserPlaces = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const [loadedPlaces, setLoadedPlaces] = useState();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const userId = useParams().userId;
+  const auth = useContext(AuthContext);
+  const [allPlaces, setAllPlaces] = useState();
+  const history = useHistory();
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`
+        );
+
+        if (responseData.places.length >= 2) {
+          responseData.places.sort((a, b) =>
+            a.priority > b.priority ? -1 : 1
+          );
+        }
+
+        setAllPlaces(responseData.places);
+
+        // condition of rendering places that belong to user or not, public places or private ones
+        let fetchedPlaces;
+        if (auth.user.userId === userId) {
+          fetchedPlaces = responseData.places;
+        } else {
+          fetchedPlaces = responseData.places.filter(
+            (place) => parseInt(place.status) === 1
+          );
+        }
+        console.log(fetchedPlaces);
+
+        setLoadedPlaces(fetchedPlaces);
+      } catch (err) {}
+    };
+    fetchPlaces();
+  }, [sendRequest, userId]);
 
   const placeDeleteHandler = (deletedPlaceId) => {
-    console.log('usunieto');
+    setLoadedPlaces((prevPlaces) =>
+      prevPlaces.filter((place) => place.id !== deletedPlaceId)
+    );
   };
 
-  const clearError = () => {
-    setError(null);
+  const onDoneHandle = () => {
+    let fetchedPlaces;
+    if (auth.user.userId === userId) {
+      fetchedPlaces = allPlaces;
+    } else {
+      fetchedPlaces = allPlaces.filter((place) => parseInt(place.status) === 1);
+    }
+    setLoadedPlaces(fetchedPlaces.filter((place) => place.done));
+  };
+
+  const onUndoneHandle = () => {
+    let fetchedPlaces;
+    if (auth.user.userId === userId) {
+      fetchedPlaces = allPlaces;
+    } else {
+      fetchedPlaces = allPlaces.filter((place) => parseInt(place.status) === 1);
+    }
+    setLoadedPlaces(fetchedPlaces.filter((place) => !place.done));
+  };
+
+  const refreshPlaces = () => {
+    setTimeout(() => {
+      // history.push(`/some-route/reload`);
+      history.push(`/`);
+    }, 300);
   };
 
   return (
@@ -61,8 +89,20 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      <PlacesHeader />
-      <PlaceList items={loadedPlaces} onDeletedPlace={placeDeleteHandler} />
+      {!isLoading && loadedPlaces && (
+        <div>
+          <PlacesHeader
+            onDoneHandle={onDoneHandle}
+            onUndoneHandle={onUndoneHandle}
+          />
+          <PlaceList
+            userId={userId}
+            items={loadedPlaces}
+            onDeletedPlace={placeDeleteHandler}
+            refreshPlaces={refreshPlaces}
+          />
+        </div>
+      )}
     </React.Fragment>
   );
 };

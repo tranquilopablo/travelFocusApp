@@ -9,13 +9,15 @@ import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Modal from '../shared/components/uiElements/Modal';
 import Map from '../shared/components/uiElements/Map';
 import { AuthContext } from '../shared/context/auth-context';
+import { useHttpClient } from '../shared/hooks/http-hook';
 
 const PlaceItem = (props) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const auth = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [error, setError] = useState();
-  const auth = useContext(AuthContext);
+  const [itemDone, setItemDone] = useState(props.done);
+  console.log(itemDone);
 
   const openMapHandler = () => setShowMap(true);
 
@@ -28,21 +30,52 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = () => {
+  const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
-    console.log('usunieto');
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/${props.id}`,
+        'DELETE',
+        null
+      );
+      props.onDelete(props.id);
+    } catch (err) {}
   };
 
+  const updateDoneStatus = async (done) => {
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/${props.id}`,
+        'PATCH',
+        JSON.stringify({
+          title: props.title,
+          description: props.description,
+          address: props.address,
+          priority: props.priority,
+          status: props.status,
+          done: done,
+        }),
+        {
+          'Content-Type': 'application/json',
+        }
+      );
+      setItemDone(done);
+    } catch (err) {}
+  };
   const addToDone = () => {
-    console.log('dodane do zrobionych');
+    updateDoneStatus(!itemDone);
+    // props.refreshPlaces();
   };
   const addToUndone = () => {
-    console.log('dodane do listy do zrobienia');
+    updateDoneStatus(!itemDone);
+    // props.refreshPlaces();
   };
 
-  const clearError = () => {
-    setError(null);
-  };
+  //   <img
+  //   src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
+  //   alt={props.title}
+  // />
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -63,7 +96,6 @@ const PlaceItem = (props) => {
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
         header="Jesteś pewien?"
-        footerClass="place-item__modal-actions"
         footer={
           <React.Fragment>
             <Button inverse onClick={cancelDeleteHandler}>
@@ -81,7 +113,10 @@ const PlaceItem = (props) => {
         <Card className={css.placeItemContent}>
           {isLoading && <LoadingSpinner asOverlay />}
           <div className={css.itemImage}>
-            <img src={props.image} alt={props.title} />
+            <img
+              src={`http://localhost:5000/${props.image}`}
+              alt={props.title}
+            />
           </div>
           <div className={css.itemInfo}>
             <h2>{props.title}</h2>
@@ -92,44 +127,49 @@ const PlaceItem = (props) => {
                 Priorytet: <span className={css.bolded}>{props.priority}</span>
               </p>
 
-              {auth.isLoggedIn && (
+              {auth.user.userId === props.creatorId && (
                 <p>
                   Dodaj do:
-                  <span
-                    onClick={addToUndone}
-                    className={`${css.bolded} ${css.boldedCheck}`}
-                  >
+                  {itemDone ? (
+                    <span
+                      onClick={addToUndone}
+                      className={`${css.bolded} ${css.boldedCheck}`}
+                    >
+                      <i
+                        className={`fa fa-list ${css.faList}`}
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  ) : (
+                    <span
+                      onClick={addToDone}
+                      className={`${css.bolded} ${css.boldedCheck}`}
+                    >
+                      <i
+                        className={`fa fa-check ${css.faCheck}`}
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  )}
+                </p>
+              )}
+
+              <p className={css.boldedCheckStatus}>
+                {!itemDone ? (
+                  <span>
                     <i
                       className={`fa fa-list ${css.faList}`}
                       aria-hidden="true"
                     ></i>
                   </span>
-                  <span
-                    onClick={addToDone}
-                    className={`${css.bolded} ${css.boldedCheck}`}
-                  >
+                ) : (
+                  <span>
                     <i
                       className={`fa fa-check ${css.faCheck}`}
                       aria-hidden="true"
                     ></i>
                   </span>
-                </p>
-              )}
-
-              <p className={css.boldedCheckStatus}>
-                <span>
-                  <i
-                    className={`fa fa-list ${css.faList}`}
-                    aria-hidden="true"
-                  ></i>
-                </span>
-
-                <span>
-                  <i
-                    className={`fa fa-check ${css.faCheck}`}
-                    aria-hidden="true"
-                  ></i>
-                </span>
+                )}
               </p>
             </div>
           </div>
@@ -138,10 +178,10 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               ZOBACZ NA MAPIE
             </Button>
-            {auth.isLoggedIn && (
+            {auth.user.userId === props.creatorId && (
               <Button to={`/miejsca/${props.id}`}>EDYTUJ</Button>
             )}
-            {auth.isLoggedIn && (
+            {auth.user.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 USUŃ
               </Button>

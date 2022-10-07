@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import css from './PlaceList.module.css';
 import Card from '../shared/components/uiElements/Card';
 import Button from '../shared/components/uiElements/Button';
 import PlaceItem from './PlaceItem';
+import { AuthContext } from '../shared/context/auth-context';
 
 const PlaceList = (props) => {
+  const auth = useContext(AuthContext);
+
+  if (props.items.length === 0 && auth.user.userId !== props.userId) {
+    return (
+      <div className={`${css.placeList} center`}>
+        <Card style={{ padding: '1rem' }}>
+          <h2>Użytkownik nie posiada publicznie udostępnionych miejsc</h2>
+          <Button to="/">WRÓĆ</Button>
+        </Card>
+      </div>
+    );
+  }
+
+
+
   if (props.items.length === 0) {
     return (
       <div className={`${css.placeList} center`}>
@@ -35,6 +51,7 @@ const PlaceList = (props) => {
             status={place.status}
             done={place.done}
             onDelete={props.onDeletedPlace}
+            refreshPlaces={props.refreshPlaces}
 
 
         />

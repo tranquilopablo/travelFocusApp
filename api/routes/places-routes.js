@@ -125,6 +125,7 @@ router.patch(
   '/:pid',
   [check('title').not().isEmpty(), check('description').isLength({ min: 5 })],
   async (req, res, next) => {
+
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -135,6 +136,7 @@ router.patch(
 
     const { title, description, address, priority, status, done } = req.body;
     const placeId = req.params.pid;
+    
 
     let coordinates;
     try {
@@ -159,10 +161,15 @@ router.patch(
     updatedPlace.title = title;
     updatedPlace.description = description;
     updatedPlace.address = address;
-    (updatedPlace.image = req.file.path), (updatedPlace.location = coordinates);
+
+    updatedPlace.location = coordinates;
     updatedPlace.priority = priority;
     updatedPlace.status = status;
     updatedPlace.done = done;
+
+    if (req.file) {
+      updatedPlace.image = req.file.path;
+    }
 
     try {
       await updatedPlace.save();
