@@ -76,8 +76,7 @@ const UserPlaces = () => {
 
   const refreshPlaces = () => {
     setTimeout(() => {
-      // history.push(`/some-route/reload`);
-      history.push(`/`);
+      history.push(`/some-route/reload`);
     }, 300);
   };
 

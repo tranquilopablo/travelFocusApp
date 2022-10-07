@@ -69,7 +69,7 @@ function App() {
         <Redirect
           exact
           from="/some-route/reload"
-          to={`/${auth.user.userId}/places`}
+          to={`/${auth.user.userId}/miejsca`}
         />
         <Redirect to="/" />
       </Switch>

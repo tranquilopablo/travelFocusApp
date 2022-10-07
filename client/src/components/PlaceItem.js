@@ -64,17 +64,14 @@ const PlaceItem = (props) => {
   };
   const addToDone = () => {
     updateDoneStatus(!itemDone);
-    // props.refreshPlaces();
+    props.refreshPlaces();
   };
   const addToUndone = () => {
     updateDoneStatus(!itemDone);
-    // props.refreshPlaces();
+    props.refreshPlaces();
   };
 
-  //   <img
-  //   src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
-  //   alt={props.title}
-  // />
+
 
   return (
     <React.Fragment>
