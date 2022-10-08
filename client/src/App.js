@@ -22,6 +22,7 @@ function App() {
   const [userPic, setUserPic] = useState(false);
 
   const login = useCallback((userData) => {
+
     localStorage.setItem(
       'userData',
       JSON.stringify({
@@ -69,11 +70,8 @@ function App() {
         <Route path="/miejsca/:placeId">
           <UpdatePlace />
         </Route>
-        <Redirect
-          exact
-          from="/some-route/reload"
-          to={`/${userId}/miejsca`}
-        />
+        <Redirect exact from="/some-route/reload" to={`/${userId}/miejsca`} />
+        <Redirect exact from="/settings-route/reload" to={`/ustawienia`} />
         <Redirect to="/" />
       </Switch>
     );

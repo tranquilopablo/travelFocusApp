@@ -17,11 +17,4 @@
     margin-bottom: 1rem;
 }
 
- /* this below is for Settings component */
-.success-confirmation {
-    display: block;
-    color: green;
-    text-align: center;
-    margin-top: 20px;
-    font-size: 1rem;
-  }
+ 
