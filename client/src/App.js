@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -17,13 +17,9 @@ import { AuthContext } from './shared/context/auth-context';
 function App() {
   const auth = useContext(AuthContext);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(auth.user ? true : false);
-  // const [userId, setUserId] = useState(auth.userId);
-  // const [userPic, setUserPic] = useState(auth.userPic);
-  const [user, setUser] = useState(auth.user);
-
-  console.log(auth);
-  console.log(user);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(false);
+  const [userPic, setUserPic] = useState(false);
 
   const login = useCallback((userData) => {
     localStorage.setItem(
@@ -34,17 +30,24 @@ function App() {
       })
     );
 
-    setUser(userData);
     setIsLoggedIn(true);
-
-    // setUserId(userData.userId);
-    // setUserPic(userData.image);
+    setUserId(userData.userId);
+    setUserPic(userData.image);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('userData');
     setIsLoggedIn(false);
-    setUser(null);
+    setUserId(null);
+  }, []);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('userData')) || false;
+    if (storedData) {
+      setIsLoggedIn(true);
+      setUserId(storedData.userId);
+      setUserPic(storedData.image);
+    }
   }, []);
 
   let routes;
@@ -69,7 +72,7 @@ function App() {
         <Redirect
           exact
           from="/some-route/reload"
-          to={`/${auth.user.userId}/miejsca`}
+          to={`/${userId}/miejsca`}
         />
         <Redirect to="/" />
       </Switch>
@@ -91,14 +94,12 @@ function App() {
     );
   }
 
-  // userId: userId,
-  //       userPic: userPic,
-
   return (
     <AuthContext.Provider
       value={{
         isLoggedIn: isLoggedIn,
-        user: user,
+        userId: userId,
+        userPic: userPic,
         login: login,
         logout: logout,
       }}

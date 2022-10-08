@@ -9,7 +9,7 @@ import { AuthContext } from '../shared/context/auth-context';
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
 
-  if (props.items.length === 0 && auth.user.userId !== props.userId) {
+  if (props.items.length === 0 && auth.userId !== props.userId) {
     return (
       <div className={`${css.placeList} center`}>
         <Card style={{ padding: '1rem' }}>

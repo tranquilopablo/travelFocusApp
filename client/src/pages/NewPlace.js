@@ -24,6 +24,7 @@ const NewPlace = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [selectValue, setSelectValue] = useState('1');
   const [radioValue, setRadioValue] = useState('1');
+
   const history = useHistory();
 
   const [formState, inputHandler] = useFormHook(
@@ -50,19 +51,23 @@ const NewPlace = () => {
 
   const placeSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log(formState.inputs); // send to the backend
     try {
       const formData = new FormData();
       formData.append('title', formState.inputs.title.value);
       formData.append('description', formState.inputs.description.value);
       formData.append('address', formState.inputs.address.value);
-      formData.append('creator', auth.user.userId);
+      formData.append('creator', auth.userId);
       formData.append('image', formState.inputs.image.value);
       formData.append('priority', selectValue);
       formData.append('status', radioValue);
+
       await sendRequest('http://localhost:5000/api/places', 'POST', formData);
       history.push('/');
     } catch (err) {}
+  };
+
+  const handleGoBack = () => {
+    history.push('/');
   };
 
   return (
@@ -119,6 +124,9 @@ const NewPlace = () => {
         <ImageUpload center id="image" onInput={inputHandler} errorText="" />
         <Button type="submit" disabled={!formState.isValid}>
           DODAJ MIEJSCE
+        </Button>
+        <Button onClick={handleGoBack} inverse>
+          WRÓĆ
         </Button>
       </form>
     </React.Fragment>

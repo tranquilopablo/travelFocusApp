@@ -33,14 +33,13 @@ const UserPlaces = () => {
 
         // condition of rendering places that belong to user or not, public places or private ones
         let fetchedPlaces;
-        if (auth.user.userId === userId) {
+        if (auth.userId === userId) {
           fetchedPlaces = responseData.places;
         } else {
           fetchedPlaces = responseData.places.filter(
             (place) => parseInt(place.status) === 1
           );
         }
-        console.log(fetchedPlaces);
 
         setLoadedPlaces(fetchedPlaces);
       } catch (err) {}
@@ -56,7 +55,7 @@ const UserPlaces = () => {
 
   const onDoneHandle = () => {
     let fetchedPlaces;
-    if (auth.user.userId === userId) {
+    if (auth.userId === userId) {
       fetchedPlaces = allPlaces;
     } else {
       fetchedPlaces = allPlaces.filter((place) => parseInt(place.status) === 1);
@@ -66,7 +65,7 @@ const UserPlaces = () => {
 
   const onUndoneHandle = () => {
     let fetchedPlaces;
-    if (auth.user.userId === userId) {
+    if (auth.userId === userId) {
       fetchedPlaces = allPlaces;
     } else {
       fetchedPlaces = allPlaces.filter((place) => parseInt(place.status) === 1);

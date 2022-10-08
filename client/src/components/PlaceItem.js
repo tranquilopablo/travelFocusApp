@@ -17,7 +17,6 @@ const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [itemDone, setItemDone] = useState(props.done);
-  console.log(itemDone);
 
   const openMapHandler = () => setShowMap(true);
 
@@ -71,8 +70,6 @@ const PlaceItem = (props) => {
     props.refreshPlaces();
   };
 
-
-
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -124,7 +121,7 @@ const PlaceItem = (props) => {
                 Priorytet: <span className={css.bolded}>{props.priority}</span>
               </p>
 
-              {auth.user.userId === props.creatorId && (
+              {auth.userId === props.creatorId && (
                 <p>
                   Dodaj do:
                   {itemDone ? (
@@ -175,10 +172,10 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               ZOBACZ NA MAPIE
             </Button>
-            {auth.user.userId === props.creatorId && (
+            {auth.userId === props.creatorId && (
               <Button to={`/miejsca/${props.id}`}>EDYTUJ</Button>
             )}
-            {auth.user.userId === props.creatorId && (
+            {auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 USUŃ
               </Button>

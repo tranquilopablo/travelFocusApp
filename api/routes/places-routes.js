@@ -123,9 +123,9 @@ router.post(
 // UPDATE PLACE
 router.patch(
   '/:pid',
+  fileUpload.single('image'),
   [check('title').not().isEmpty(), check('description').isLength({ min: 5 })],
   async (req, res, next) => {
-
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -134,9 +134,9 @@ router.patch(
       return next(error);
     }
 
-    const { title, description, address, priority, status, done } = req.body;
+    const { title, description, address, priority, status, done, creator } =
+      req.body;
     const placeId = req.params.pid;
-    
 
     let coordinates;
     try {
@@ -174,7 +174,7 @@ router.patch(
     try {
       await updatedPlace.save();
     } catch (err) {
-      const error = new Error('Something went wrong,could not update place.');
+      const error = new Error('Something went wrong, could not update place.');
       error.code = 500;
       return next(error);
     }

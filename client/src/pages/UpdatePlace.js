@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 
 import Button from '../shared/components/uiElements/Button';
 import Card from '../shared/components/uiElements/Card';
@@ -11,53 +10,22 @@ import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import RadioInput from '../shared/components/uiElements/RadioInput';
 import SelectForm from '../shared/components/uiElements/SelectForm';
 import { useFormHook } from '../shared/hooks/useFormHook';
+import { useHttpClient } from '../shared/hooks/http-hook';
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from '../shared/util/validators.js';
+import { AuthContext } from '../shared/context/auth-context';
 
 import css from './NewPlace.module.css';
 
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/EmpireStateNewYokCity.jpg/1920px-EmpireStateNewYokCity.jpg?1654820333654',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9856644,
-    },
-    creator: 'u1',
-    priority: '5',
-    status: '1',
-    done: false,
-  },
-  {
-    id: 'p2',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/c/c7/Empire_State_Building_from_the_Top_of_the_Rock.jpg?1654818945759',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9856644,
-    },
-    creator: 'u2',
-    priority: '4',
-    status: '0',
-    done: true,
-  },
-];
-
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
-  const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectValue, setSelectValue] = useState('1');
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [loadedPlace, setLoadedPlace] = useState();
+  const history = useHistory();
+  const auth = useContext(AuthContext);
+  const [selectValue, setSelectValue] = useState('');
   const [radioValue, setRadioValue] = useState('1');
 
   const [formState, inputHandler, setFormData] = useFormHook(
@@ -81,50 +49,72 @@ const UpdatePlace = () => {
     },
     true
   );
-  const loadedPlace = DUMMY_PLACES.find((place) => place.id === placeId);
 
   useEffect(() => {
-    if (loadedPlace) {
-      setSelectValue(loadedPlace.priority);
-      setRadioValue(loadedPlace.status);
+    const fetchPlace = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/${placeId}`
+        );
+        setLoadedPlace(responseData.place);
+        setFormData(
+          {
+            title: {
+              value: responseData.place.title,
+              isValid: true,
+            },
+            description: {
+              value: responseData.place.description,
+              isValid: true,
+            },
+            address: {
+              value: responseData.place.description,
+              isValid: true,
+            },
+            image: {
+              value: responseData.place.image,
+              isValid: true,
+            },
+          },
+          true
+        );
+        setSelectValue(responseData.place.priority);
+        setRadioValue(responseData.place.status);
+      } catch (err) {}
+    };
+    fetchPlace();
+  }, [sendRequest, placeId, setFormData, setRadioValue, setSelectValue]);
 
-      setFormData(
-        {
-          title: {
-            value: loadedPlace.title,
-            isValid: true,
-          },
-          description: {
-            value: loadedPlace.description,
-            isValid: true,
-          },
-          address: {
-            value: loadedPlace.description,
-            isValid: true,
-          },
-          image: {
-            value: loadedPlace.image,
-            isValid: true,
-          },
-        },
-        true
-      );
-    }
-
-    setIsLoading(false);
-  }, [setFormData, loadedPlace, setRadioValue, setSelectValue]);
-
-  const placeUpdateSubmitHandler = (event) => {
+  const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState);
-  };
 
-  const clearError = () => {
-    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append('title', formState.inputs.title.value);
+      formData.append('description', formState.inputs.description.value);
+      formData.append('address', formState.inputs.address.value);
+      formData.append('creator', auth.userId);
+      formData.append('priority', selectValue);
+      formData.append('status', radioValue);
+      formData.append('done', loadedPlace.done);
+
+      if (loadedPlace.image !== formState.inputs.image.value) {
+        formData.append('image', formState.inputs.image.value);
+      }
+
+      await sendRequest(
+        `http://localhost:5000/api/places/${placeId}`,
+        'PATCH',
+        formData
+      );
+      // don't need headers object with application/json when using FormData
+
+      history.push('/' + auth.userId + '/miejsca');
+    } catch (err) {}
   };
 
   const handleGoBack = () => {
-    console.log('Wrociles do poprzedniej strony');
+    history.push('/' + auth.userId + '/miejsca');
   };
 
   if (isLoading) {
@@ -207,17 +197,12 @@ const UpdatePlace = () => {
             id="image"
             onInput={inputHandler}
             errorText=""
-            initialValue={loadedPlace.image}
+            initialValue={`http://localhost:5000/${loadedPlace.image}`}
           />
           <Button type="submit" disabled={!formState.isValid}>
             AKTUALIZUJ MIEJSCE
           </Button>
-          <Button
-            customstylebtn
-            onClick={handleGoBack}
-            inverse
-            className="btn-goback"
-          >
+          <Button onClick={handleGoBack} inverse>
             WRÓĆ
           </Button>
         </form>

@@ -17,7 +17,7 @@ const NavLinks = () => {
       </li>
       {auth.isLoggedIn && (
         <li>
-          <NavLink to={`/${auth.user.userId}/miejsca`}>MOJE MIEJSCA</NavLink>
+          <NavLink to={`/${auth.userId}/miejsca`}>MOJE MIEJSCA</NavLink>
         </li>
       )}
       {auth.isLoggedIn && (
@@ -40,7 +40,7 @@ const NavLinks = () => {
           <Link to={'/ustawienia'}>
             <img
               className={css.image}
-              src={`http://localhost:5000/${auth.user.image}`}
+              src={`http://localhost:5000/${auth.userPic}`}
               alt=""
             />
           </Link>
