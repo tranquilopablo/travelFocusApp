@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 const fs = require('fs');
 const { check, validationResult } = require('express-validator');
@@ -237,7 +238,6 @@ router.patch(
     }
 
     const userObject = updatedUser.toObject({ getters: true });
-   
 
     res.status(200).json({
       userId: userObject.id,
@@ -278,7 +278,8 @@ router.delete('/:uid', async (req, res, next) => {
     await Place.deleteMany({ creator: userId }).session(sess);
     await sess.commitTransaction();
   } catch (err) {
-    const error = new Error('Something went wrong, could not delete place');
+
+    const error = new Error('Something went wrong, could not delete userr');
     error.code = 500;
     return next(error);
   }

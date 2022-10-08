@@ -45,7 +45,7 @@ const UserPlaces = () => {
       } catch (err) {}
     };
     fetchPlaces();
-  }, [sendRequest, userId]);
+  }, [sendRequest, auth.userId, userId]);
 
   const placeDeleteHandler = (deletedPlaceId) => {
     setLoadedPlaces((prevPlaces) =>
@@ -74,9 +74,10 @@ const UserPlaces = () => {
   };
 
   const refreshPlaces = () => {
-    setTimeout(() => {
-      history.push(`/some-route/reload`);
-    }, 300);
+    // setTimeout(() => {
+    //   history.push(`/some-route/reload`);
+    // }, 300);
+    history.push(`/some-route/reload`);
   };
 
   return (

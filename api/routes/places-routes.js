@@ -157,6 +157,7 @@ router.patch(
 
     // here it would be good to check whether we are allowed to update place
     //  if (updatedPlace.creator.toString() !== req.userid )
+   
 
     updatedPlace.title = title;
     updatedPlace.description = description;

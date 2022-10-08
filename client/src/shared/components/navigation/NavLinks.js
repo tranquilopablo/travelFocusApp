@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/auth-context';
 
@@ -6,7 +6,6 @@ import css from './NavLinks.module.css';
 
 const NavLinks = () => {
   const auth = useContext(AuthContext);
-  
 
   return (
     <ul className={css.navLinks}>

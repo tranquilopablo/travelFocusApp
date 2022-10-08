@@ -85,13 +85,9 @@ const Settings = () => {
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
+
   const cancelDeleteWarningHandler = () => {
     setShowConfirmModal(false);
-  };
-
-  const confirmDeleteHandler = () => {
-    setShowConfirmModal(false);
-    console.log('usunieto');
   };
 
   const updateAccountHandler = async (e) => {
@@ -106,7 +102,7 @@ const Settings = () => {
       if (loadedUser.image !== formState.inputs.image.value) {
         formData.append('image', formState.inputs.image.value);
       }
-     
+
       const responseData = await sendRequest(
         `http://localhost:5000/api/users/${auth.userId}`,
         'PATCH',
@@ -114,10 +110,25 @@ const Settings = () => {
       );
       // don't need headers object with application/json when using FormData
 
-      // history.push('/' + auth.userId + '/miejsca');
-
       auth.login(responseData);
-        history.push('/settings-route/reload');
+      history.push('/settings-route/reload');
+    } catch (err) {}
+  };
+
+  const confirmDeleteHandler = async (e) => {
+    e.preventDefault();
+
+    setShowConfirmModal(false);
+
+    try {
+      const responseData = await sendRequest(
+        `http://localhost:5000/api/users/${auth.userId}`,
+        'DELETE',
+        null
+      );
+
+      console.log(responseData.message);
+      auth.logout();
     } catch (err) {}
   };
 
@@ -201,7 +212,6 @@ const Settings = () => {
           <Button inverse onClick={showDeleteWarningHandler}>
             USUŃ
           </Button>
-          
         </Card>
       )}
     </React.Fragment>

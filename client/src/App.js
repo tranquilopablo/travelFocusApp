@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -15,7 +15,6 @@ import UpdatePlace from './pages/UpdatePlace';
 import { AuthContext } from './shared/context/auth-context';
 
 function App() {
-  const auth = useContext(AuthContext);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(false);

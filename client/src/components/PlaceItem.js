@@ -43,7 +43,7 @@ const PlaceItem = (props) => {
 
   const updateDoneStatus = async (done) => {
     try {
-      await sendRequest(
+      const responseData = await sendRequest(
         `http://localhost:5000/api/places/${props.id}`,
         'PATCH',
         JSON.stringify({
@@ -58,16 +58,18 @@ const PlaceItem = (props) => {
           'Content-Type': 'application/json',
         }
       );
-      setItemDone(done);
+
+      if (responseData.place) {
+        setItemDone(done);
+        props.refreshPlaces();
+      }
     } catch (err) {}
   };
   const addToDone = () => {
     updateDoneStatus(!itemDone);
-    props.refreshPlaces();
   };
   const addToUndone = () => {
     updateDoneStatus(!itemDone);
-    props.refreshPlaces();
   };
 
   return (
