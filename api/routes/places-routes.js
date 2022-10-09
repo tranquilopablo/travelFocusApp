@@ -155,9 +155,14 @@ router.patch(
       return next(error);
     }
 
-    // here it would be good to check whether we are allowed to update place
-    //  if (updatedPlace.creator.toString() !== req.userid )
-   
+    // checking whether we are allowed to update place
+    if (updatedPlace.creator.toString() !== creator) {
+      const error = new Error(
+        'Nie jesteś uprawniony do edytowania tego miejsca.'
+      );
+      error.code = 401;
+      return next(error);
+    }
 
     updatedPlace.title = title;
     updatedPlace.description = description;
@@ -185,8 +190,9 @@ router.patch(
 );
 /////////////////////////////////////////////////////////////////////////////////////////////
 // DELETE PLACE
-router.delete('/:pid', async (req, res, next) => {
+router.delete('/:pid/:uid', async (req, res, next) => {
   const placeId = req.params.pid;
+  const userId = req.params.uid;
 
   let place;
   try {
@@ -203,8 +209,12 @@ router.delete('/:pid', async (req, res, next) => {
     return next(error);
   }
 
-  // here it would be good to check whether we are allowed to delete place
-  //  if (place.creator.id !== req.userId)
+  // checking whether we are allowed to delete place
+  if (place.creator._id.toString() !== userId) {
+    const error = new Error('Nie jesteś uprawniony do usunięcia tego miejsca.');
+    error.code = 401;
+    return next(error);
+  }
 
   const imagePath = place.image;
 

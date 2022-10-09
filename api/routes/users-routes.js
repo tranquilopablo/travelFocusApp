@@ -218,8 +218,9 @@ router.patch(
       return next(error);
     }
 
-    // here it would be good to check whether we are allowed to update user
-    //  if (updatedUser.toObject({ getters: true }).id !== userId ;
+    
+
+    
 
     updatedUser.name = name;
     updatedUser.email = email;
@@ -266,8 +267,6 @@ router.delete('/:uid', async (req, res, next) => {
     return next(error);
   }
 
-  // here it would be good to check whether we are allowed to update user
-  //  if (updatedUser.toObject({ getters: true }).id !== userId ;
 
   const imagePath = user.image;
 

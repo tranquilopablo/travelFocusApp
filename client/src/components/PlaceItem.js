@@ -33,7 +33,7 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
+        `http://localhost:5000/api/places/${props.id}/${auth.userId}`,
         'DELETE',
         null
       );
@@ -53,6 +53,7 @@ const PlaceItem = (props) => {
           priority: props.priority,
           status: props.status,
           done: done,
+          creator: auth.userId,
         }),
         {
           'Content-Type': 'application/json',
