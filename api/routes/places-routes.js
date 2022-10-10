@@ -9,6 +9,7 @@ const getCoordsForAddress = require('../util/location');
 const Place = require('../models/place');
 const User = require('../models/user');
 const fileUpload = require('../middleware/file-upload');
+const checkAuth = require('../middleware/check-auth');
 
 ///////////////////////////////////////////////////////////////////////////////
 // GET PLACE BY PLACE ID
@@ -49,6 +50,10 @@ router.get('/user/:uid', async (req, res, next) => {
     places: places.map((place) => place.toObject({ getters: true })),
   });
 });
+
+/////////////////////////////////////////
+router.use(checkAuth);
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // CREATE PLACE
 router.post(
@@ -209,7 +214,7 @@ router.delete('/:pid/:uid', async (req, res, next) => {
     return next(error);
   }
 
-  // checking whether we are allowed to delete place
+  // checking whether we are allowed to delete place. We check throught id because in this case when we used populate methood above we have got full user object after place.creator. But actually thanks to that we dont need to use method toString()
   if (place.creator._id.toString() !== userId) {
     const error = new Error('Nie jesteś uprawniony do usunięcia tego miejsca.');
     error.code = 401;

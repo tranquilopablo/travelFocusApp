@@ -88,7 +88,7 @@ const Login = () => {
       } catch (e) {}
     } else {
       try {
-        // with FormData we don't need to add application/json because req contains it allready
+        // with FormData don't need to add application/json because req contains it allready
         const formData = new FormData();
         formData.append('email', formState.inputs.email.value);
         formData.append('name', formState.inputs.name.value);

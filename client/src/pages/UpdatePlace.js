@@ -105,7 +105,10 @@ const UpdatePlace = () => {
       await sendRequest(
         `http://localhost:5000/api/places/${placeId}`,
         'PATCH',
-        formData
+        formData,
+        {
+          Authorization: 'Bearer ' + auth.token,
+        }
       );
       // don't need headers object with application/json when using FormData
 

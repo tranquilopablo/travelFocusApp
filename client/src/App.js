@@ -15,43 +15,42 @@ import UpdatePlace from './pages/UpdatePlace';
 import { AuthContext } from './shared/context/auth-context';
 
 function App() {
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(false);
   const [userPic, setUserPic] = useState(false);
 
   const login = useCallback((userData) => {
-
     localStorage.setItem(
       'userData',
       JSON.stringify({
         userId: userData.userId,
         image: userData.image,
+        token: userData.token,
       })
     );
 
-    setIsLoggedIn(true);
+    setToken(userData.token);
     setUserId(userData.userId);
     setUserPic(userData.image);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('userData');
-    setIsLoggedIn(false);
+    setToken(null);
     setUserId(null);
   }, []);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData')) || false;
-    if (storedData) {
-      setIsLoggedIn(true);
+    if (storedData && storedData.token) {
+      setToken(token);
       setUserId(storedData.userId);
       setUserPic(storedData.image);
     }
   }, []);
 
   let routes;
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <Switch>
         <Route path="/" exact>
@@ -94,9 +93,10 @@ function App() {
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: isLoggedIn,
+        isLoggedIn: !!token,
         userId: userId,
         userPic: userPic,
+        token,
         login: login,
         logout: logout,
       }}

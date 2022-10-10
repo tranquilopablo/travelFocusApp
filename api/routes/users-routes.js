@@ -6,6 +6,7 @@ const fs = require('fs');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
 const fileUpload = require('../middleware/file-upload');
 const User = require('../models/user');
@@ -126,10 +127,26 @@ router.post(
       return next(error);
     }
 
+    let token;
+    try {
+      token = jwt.sign(
+        { userId: createdUser.id, email: createdUser.email },
+        'important_key_value',
+        { expiresIn: '2h' }
+      );
+    } catch (err) {
+      const error = new Error(
+        'Rejestracja się nie udała, proszę spróbuj ponownie.'
+      );
+      error.code = 500;
+      return next(error);
+    }
+
     res.status(201).json({
       userId: createdUser.id,
       email: createdUser.email,
       image: createdUser.image,
+      token: token,
     });
   }
 );
@@ -171,10 +188,26 @@ router.post('/login', async (req, res, next) => {
 
   const userObject = existingUser.toObject({ getters: true });
 
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: userObject.id, email: userObject.email },
+      'important_key_value',
+      { expiresIn: '2h' }
+    );
+  } catch (err) {
+    const error = new Error(
+      'Logowanie się nie udało, proszę spróbuj ponownie.'
+    );
+    error.code = 500;
+    return next(error);
+  }
+
   res.json({
     userId: userObject.id,
     email: userObject.email,
     image: userObject.image,
+    token: token,
   });
 });
 ////////////////////////////////////////////////////////////////////////
@@ -217,10 +250,6 @@ router.patch(
       error.code = 500;
       return next(error);
     }
-
-    
-
-    
 
     updatedUser.name = name;
     updatedUser.email = email;
@@ -267,7 +296,6 @@ router.delete('/:uid', async (req, res, next) => {
     return next(error);
   }
 
-
   const imagePath = user.image;
 
   try {
@@ -277,7 +305,6 @@ router.delete('/:uid', async (req, res, next) => {
     await Place.deleteMany({ creator: userId }).session(sess);
     await sess.commitTransaction();
   } catch (err) {
-
     const error = new Error('Something went wrong, could not delete userr');
     error.code = 500;
     return next(error);

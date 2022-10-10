@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   isLoggedIn: JSON.parse(localStorage.getItem('userData')) || false,
   userId: null,
   userPic: null,
+  token: null,
   login: () => {},
   logout: () => {},
 };
