@@ -42,12 +42,14 @@ function App() {
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData')) || false;
+    console.log(storedData);
+
     if (storedData && storedData.token) {
-      setToken(token);
+      setToken(storedData.token);
       setUserId(storedData.userId);
       setUserPic(storedData.image);
     }
-  }, []);
+  }, [token]);
 
   let routes;
   if (token) {
