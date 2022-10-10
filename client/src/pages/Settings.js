@@ -106,9 +106,14 @@ const Settings = () => {
       const responseData = await sendRequest(
         `http://localhost:5000/api/users/${auth.userId}`,
         'PATCH',
-        formData
+        formData,
+        {
+          Authorization: 'Bearer ' + auth.token,
+        }
       );
-      // don't need headers object with application/json when using FormData
+      // don't need headers object with application/json when using FormData, but finally i use token so i need put in header Authorization
+
+      responseData.token = auth.token;
 
       auth.login(responseData);
       history.push('/settings-route/reload');
@@ -124,7 +129,10 @@ const Settings = () => {
       const responseData = await sendRequest(
         `http://localhost:5000/api/users/${auth.userId}`,
         'DELETE',
-        null
+        null,
+        {
+          Authorization: 'Bearer ' + auth.token,
+        }
       );
 
       console.log(responseData.message);

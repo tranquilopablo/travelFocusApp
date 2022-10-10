@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
+const checkAuth = require('../middleware/check-auth');
 const fileUpload = require('../middleware/file-upload');
 const User = require('../models/user');
 const Place = require('../models/place');
@@ -210,6 +211,10 @@ router.post('/login', async (req, res, next) => {
     token: token,
   });
 });
+
+/////////////////////////////////////////
+router.use(checkAuth);
+
 ////////////////////////////////////////////////////////////////////////
 //UPDATE USER
 router.patch(
@@ -276,6 +281,7 @@ router.patch(
     });
   }
 );
+
 //////////////////////////////////////////////////////////////////////////
 //DELETE USER
 router.delete('/:uid', async (req, res, next) => {

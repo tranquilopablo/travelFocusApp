@@ -42,7 +42,6 @@ function App() {
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData')) || false;
-    console.log(storedData);
 
     if (storedData && storedData.token) {
       setToken(storedData.token);
