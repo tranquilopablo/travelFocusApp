@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import css from './UserItem.module.css';
 import Card from '../shared/components/uiElements/Card';
 
-{/* <img src={`http://localhost:5000/${props.image}`} alt={props.name} /> */}
 const UserItem = (props) => {
   return (
     <li className={css.userItem}>

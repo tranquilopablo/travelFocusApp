@@ -42,7 +42,7 @@ router.get('/:pid', async (req, res, next) => {
   try {
     place = await Place.findById(placeId);
   } catch (err) {
-    const error = new Error('Something went wrong, could not find a place');
+    const error = new Error('Nieudana próba znalezienia miejsca.');
     error.code = 500;
     return next(error);
   }
@@ -64,7 +64,7 @@ router.get('/user/:uid', async (req, res, next) => {
   try {
     places = await Place.find({ creator: userId });
   } catch (err) {
-    const error = new Error('Fetching places failed, please try again later');
+    const error = new Error('Nieudana próba pobrania miejsc, spróbuj ponownie');
     error.code = 500;
     return next(error);
   }
@@ -90,7 +90,7 @@ router.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      const error = new Error('Invalid inputs passed, please check your data.');
+      const error = new Error('Niepoprawne dane, sprawdź i popraw.');
       error.code = 422;
       throw error;
     }
@@ -143,13 +143,13 @@ router.post(
     try {
       user = await User.findById(creator);
     } catch (err) {
-      const error = new Error('Creating place failed, please try again.');
+      const error = new Error('Próba stworzenia miejsca nieudana, spróbuj ponownie.');
       error.code = 500;
       return next(error);
     }
 
     if (!user) {
-      const error = new Error('Could not find user for provided id');
+      const error = new Error('Nie można znależć użytkownika dla podanego id.');
       error.code = 404;
       return next(error);
     }
@@ -162,7 +162,7 @@ router.post(
       await user.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
-      const error = new Error('Creating place failed, please try again');
+      const error = new Error('Próba stworzenia miejsca nieudana, spróbuj ponownie.');
       error.code = 500;
       return next(error);
     }
@@ -180,7 +180,7 @@ router.patch(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      const error = new Error('Invalid inputs passed, please check your data.');
+      const error = new Error('Niepoprawne dane, sprawdź i popraw.');
       error.code = 422;
       return next(error);
     }
@@ -201,7 +201,7 @@ router.patch(
     try {
       updatedPlace = await Place.findById(placeId);
     } catch (err) {
-      const error = new Error('Something went wrong,could not update place.');
+      const error = new Error('Coś nie tak, nieudana próba edycji miejsca.');
       error.code = 500;
       return next(error);
     }
@@ -249,7 +249,7 @@ router.patch(
     try {
       await updatedPlace.save();
     } catch (err) {
-      const error = new Error('Something went wrong, could not update place.');
+      const error = new Error('Coś nie tak, nieudana próba edycji miejsca.');
       error.code = 500;
       return next(error);
     }
@@ -267,13 +267,13 @@ router.delete('/:pid/:uid', async (req, res, next) => {
   try {
     place = await Place.findById(placeId).populate('creator');
   } catch (err) {
-    const error = new Error('Something went wrong,could not delete place.');
+    const error = new Error('Coś nie tak, nieudana próba usunięcia miejsca.');
     error.code = 500;
     return next(error);
   }
 
   if (!place) {
-    const error = new Error('Could not find place for this id');
+    const error = new Error('Nie można znależć miejsca dla podanego id.');
     error.code = 404;
     return next(error);
   }
@@ -295,7 +295,7 @@ router.delete('/:pid/:uid', async (req, res, next) => {
     await place.creator.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
-    const error = new Error('Something went wrong, could not delete place');
+    const error = new Error('Coś nie tak, nieudana próba usunięcia miejsca.');
     error.code = 500;
     return next(error);
   }
@@ -304,7 +304,7 @@ router.delete('/:pid/:uid', async (req, res, next) => {
   //   console.log(err);
   // });
 
-  res.status(200).json({ message: 'Deleted place' });
+  res.status(200).json({ message: 'Miejsce usunięto.' });
 });
 
 module.exports = router;

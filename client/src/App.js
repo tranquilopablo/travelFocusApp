@@ -16,18 +16,26 @@ const UpdatePlace = React.lazy(() => import('./pages/UpdatePlace'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 
+let logoutTimer;
+
 function App() {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(false);
+  const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [userPic, setUserPic] = useState(false);
 
-  const login = useCallback((userData) => {
+  const login = useCallback((userData, expirationDate) => {
+    const tokenExpirationDateLeft =
+      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60 * 2);
+    setTokenExpirationDate(tokenExpirationDateLeft);
     localStorage.setItem(
       'userData',
       JSON.stringify({
         userId: userData.userId,
         image: userData.image,
         token: userData.token,
+        expiration: tokenExpirationDateLeft.toISOString(),
+        // to be sure that in Json file we got correct date after conversion
       })
     );
 
@@ -40,17 +48,31 @@ function App() {
     localStorage.removeItem('userData');
     setToken(null);
     setUserId(null);
+    setTokenExpirationDate(null);
+
   }, []);
+
+  useEffect(() => {
+    if (token && tokenExpirationDate) {
+      const remainingTime =
+        tokenExpirationDate.getTime() - new Date().getTime();
+      logoutTimer = setTimeout(logout, remainingTime);
+    } else {
+      clearTimeout(logoutTimer);
+    }
+  }, [token, logout, tokenExpirationDate]);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData')) || false;
 
-    if (storedData && storedData.token) {
-      setToken(storedData.token);
-      setUserId(storedData.userId);
-      setUserPic(storedData.image);
-    }
-  }, [token]);
+    if (
+      storedData &&
+      storedData.token &&
+      new Date(storedData.expiration) > new Date()
+    ) {
+      login(storedData, new Date(storedData.expiration));
+    } 
+  }, [login ]);
 
   let routes;
   if (token) {

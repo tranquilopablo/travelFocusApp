@@ -21,7 +21,7 @@ const fileUpload = multer({
 
   fileFilter: (req, file, cb) => {
     const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    let error = isValid ? null : new Error('Invalid mime type!');
+    let error = isValid ? null : new Error('Nieprawidłowy typ danych zdjęcia!');
     cb(error, isValid);
   },
 });

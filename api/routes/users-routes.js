@@ -41,7 +41,7 @@ router.get('/', async (req, res, next) => {
   try {
     users = await User.find({}, '-password');
   } catch (err) {
-    const error = new Error("'Fetching users failed,please try again later.'");
+    const error = new Error("Dostęp do użytkowników jest ograniczony, spróbuj póżniej");
     error.code = 500;
     return next(error);
   }
@@ -58,7 +58,7 @@ router.get('/:uid', async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (err) {
-    const error = new Error('Something went wrong, could not find a user');
+    const error = new Error('Nieudało się znależć użytkownika');
     error.code = 500;
     return next(error);
   }
@@ -126,7 +126,7 @@ router.post(
     try {
       hashedPassword = await bcrypt.hash(password, 12);
     } catch (err) {
-      const error = new Error('Could not create user, please try again');
+      const error = new Error('Nieudana próba stworzenia użytkownika, proszę spróbuj ponownie');
       error.code = 500;
       return next(error);
     }
@@ -174,7 +174,7 @@ router.post(
     let token;
     try {
       token = jwt.sign(
-        { userId: createdUser.id, email: createdUser.email },
+        { userId: createdUser.id},
         process.env.JWT_KEY,
         { expiresIn: '2h' }
       );
@@ -235,7 +235,7 @@ router.post('/login', async (req, res, next) => {
   let token;
   try {
     token = jwt.sign(
-      { userId: userObject.id, email: userObject.email },
+      { userId: userObject.id },
       process.env.JWT_KEY,
       { expiresIn: '2h' }
     );
@@ -255,7 +255,10 @@ router.post('/login', async (req, res, next) => {
   });
 });
 
-/////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////// 
 router.use(checkAuth);
 
 ////////////////////////////////////////////////////////////////////////
@@ -272,7 +275,7 @@ router.patch(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      const error = new Error('Invalid inputs passed, please check your data.');
+      const error = new Error('Niepoprawne dane, proszę sprawdzić poprawność.');
       error.code = 422;
       return next(error);
     }
@@ -285,7 +288,7 @@ router.patch(
     try {
       hashedPassword = await bcrypt.hash(password, 12);
     } catch (err) {
-      const error = new Error('Could not update user, please try again');
+      const error = new Error('Nie można edytować użytkownika, spróbuj ponownie.');
       error.code = 500;
       return next(error);
     }
@@ -294,7 +297,7 @@ router.patch(
     try {
       updatedUser = await User.findById(userId);
     } catch (err) {
-      const error = new Error('Something went wrong,could not update user.');
+      const error = new Error('Pojawił się bląd, nie można edytować użytkownika.');
       error.code = 500;
       return next(error);
     }
@@ -327,7 +330,7 @@ router.patch(
     try {
       await updatedUser.save();
     } catch (err) {
-      const error = new Error('Something went wrong,could not update user.');
+      const error = new Error('Pojawił się bląd, nie można edytować użytkownika.');
       error.code = 500;
       return next(error);
     }
@@ -351,13 +354,13 @@ router.delete('/:uid', async (req, res, next) => {
   try {
     user = await User.findById(userId).populate('places');
   } catch (err) {
-    const error = new Error('Something went wrong,could not delete user.');
+    const error = new Error('Pojawił się bląd, nie można usunąć użytkownika.');
     error.code = 500;
     return next(error);
   }
 
   if (!user) {
-    const error = new Error('Could not find user for this id');
+    const error = new Error('Nie można znależć użytkownika o podanym id');
     error.code = 404;
     return next(error);
   }
@@ -371,7 +374,7 @@ router.delete('/:uid', async (req, res, next) => {
     await Place.deleteMany({ creator: userId }).session(sess);
     await sess.commitTransaction();
   } catch (err) {
-    const error = new Error('Something went wrong, could not delete userr');
+    const error = new Error('Pojawił się bląd, nie można usunąć użytkownika.');
     error.code = 500;
     return next(error);
   }
@@ -380,7 +383,7 @@ router.delete('/:uid', async (req, res, next) => {
   //   console.log(err);
   // });
 
-  res.status(200).json({ message: 'Deleted user' });
+  res.status(200).json({ message: 'Usunięto użytkownika' });
 });
 
 module.exports = router;
