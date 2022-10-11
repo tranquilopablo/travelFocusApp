@@ -137,7 +137,6 @@ router.post(
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
-    console.log(params.Key);
 
     const command = new PutObjectCommand(params);
 

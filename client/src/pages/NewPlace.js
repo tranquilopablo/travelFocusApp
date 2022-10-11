@@ -61,9 +61,14 @@ const NewPlace = () => {
       formData.append('priority', selectValue);
       formData.append('status', radioValue);
 
-      await sendRequest('http://localhost:5000/api/places', 'POST', formData, {
-        Authorization: 'Bearer ' + auth.token,
-      });
+      await sendRequest(
+        process.env.REACT_APP_BACKEND_URL + '/places',
+        'POST',
+        formData,
+        {
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
       history.push('/');
     } catch (err) {}
   };

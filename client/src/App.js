@@ -49,7 +49,6 @@ function App() {
     setToken(null);
     setUserId(null);
     setTokenExpirationDate(null);
-
   }, []);
 
   useEffect(() => {
@@ -71,8 +70,8 @@ function App() {
       new Date(storedData.expiration) > new Date()
     ) {
       login(storedData, new Date(storedData.expiration));
-    } 
-  }, [login ]);
+    }
+  }, [login]);
 
   let routes;
   if (token) {

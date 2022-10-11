@@ -52,7 +52,7 @@ const Settings = () => {
     const fetchUser = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/users/${auth.userId}`
+          process.env.REACT_APP_BACKEND_URL + `/users/${auth.userId}`,
         );
         setLoadedUser(responseData);
 
@@ -104,7 +104,7 @@ const Settings = () => {
       }
 
       const responseData = await sendRequest(
-        `http://localhost:5000/api/users/${auth.userId}`,
+        process.env.REACT_APP_BACKEND_URL + `/users/${auth.userId}`,
         'PATCH',
         formData,
         {
@@ -127,7 +127,7 @@ const Settings = () => {
 
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/users/${auth.userId}`,
+        process.env.REACT_APP_BACKEND_URL + `/users/${auth.userId}`,
         'DELETE',
         null,
         {
@@ -154,7 +154,6 @@ const Settings = () => {
         show={showConfirmModal}
         onCancel={cancelDeleteWarningHandler}
         header="Jesteś pewien że chcesz usunąć konto?"
-        footerClass="place-item__modal-actions"
         footer={
           <React.Fragment>
             <Button inverse onClick={cancelDeleteWarningHandler}>

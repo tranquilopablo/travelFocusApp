@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
 const INITIAL_STATE = {
-  isLoggedIn: JSON.parse(localStorage.getItem('userData')) || false,
+  isLoggedIn: false,
   userId: null,
   userPic: null,
   token: null,

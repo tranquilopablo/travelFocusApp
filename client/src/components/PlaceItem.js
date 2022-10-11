@@ -33,7 +33,8 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props.id}/${auth.userId}`,
+        process.env.REACT_APP_BACKEND_URL +
+          `/places/${props.id}/${auth.userId}`,
         'DELETE',
         null,
         { Authorization: 'Bearer ' + auth.token }
@@ -45,7 +46,7 @@ const PlaceItem = (props) => {
   const updateDoneStatus = async (done) => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${props.id}`,
         'PATCH',
         JSON.stringify({
           title: props.title,
