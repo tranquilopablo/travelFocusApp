@@ -175,7 +175,7 @@ router.post(
     try {
       token = jwt.sign(
         { userId: createdUser.id, email: createdUser.email },
-        'important_key_value',
+        process.env.JWT_KEY,
         { expiresIn: '2h' }
       );
     } catch (err) {
@@ -236,7 +236,7 @@ router.post('/login', async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: userObject.id, email: userObject.email },
-      'important_key_value',
+      process.env.JWT_KEY,
       { expiresIn: '2h' }
     );
   } catch (err) {
@@ -299,19 +299,21 @@ router.patch(
       return next(error);
     }
 
-    const params = {
-      Bucket: bucketName,
-      Key: `${req.file.originalname}${randomId}`,
-      Body: req.file.buffer,
-      ContentType: req.file.mimetype,
-    };
-    console.log(params.Key);
+    let workingUrl;
+    if (req.file) {
+      const params = {
+        Bucket: bucketName,
+        Key: `${req.file.originalname}${randomId}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+      };
 
-    const command = new PutObjectCommand(params);
+      const command = new PutObjectCommand(params);
 
-    await s3.send(command);
+      await s3.send(command);
 
-    const workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
+      workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
+    }
 
     updatedUser.name = name;
     updatedUser.email = email;
