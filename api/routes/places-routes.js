@@ -285,7 +285,7 @@ router.delete('/:pid/:uid', async (req, res, next) => {
     return next(error);
   }
 
-  const imagePath = place.image;
+  // const imagePath = place.image;
 
   try {
     const sess = await mongoose.startSession();
