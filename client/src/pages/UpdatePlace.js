@@ -138,6 +138,9 @@ const UpdatePlace = () => {
     );
   }
 
+
+  // initialValue={`http://localhost:5000/${loadedPlace.image}`}
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -200,7 +203,7 @@ const UpdatePlace = () => {
             id="image"
             onInput={inputHandler}
             errorText=""
-            initialValue={`http://localhost:5000/${loadedPlace.image}`}
+            initialValue={`${loadedPlace.image}`}
           />
           <Button type="submit" disabled={!formState.isValid}>
             AKTUALIZUJ MIEJSCE

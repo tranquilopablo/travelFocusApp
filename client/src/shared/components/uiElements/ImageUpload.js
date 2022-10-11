@@ -60,7 +60,7 @@ const ImageUpload = (props) => {
       <div className={`${props.center && css['image-upload-center']}`}>
         <div className={css['image-upload__preview']}>
           {previewUrl && <img src={previewUrl} alt="Preview" />}
-          {!previewUrl && <p>Proszę wybierz zdjęcie do 2MB.</p>}
+          {!previewUrl && <p>Proszę wybierz zdjęcie.</p>}
         </div>
         <Button type="button" onClick={pickImageHandler}>
           WYBIERZ ZDJĘCIE

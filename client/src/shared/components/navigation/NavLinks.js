@@ -7,6 +7,9 @@ import css from './NavLinks.module.css';
 const NavLinks = () => {
   const auth = useContext(AuthContext);
 
+
+  // src={`http://localhost:5000/${auth.userPic}`}
+
   return (
     <ul className={css.navLinks}>
       <li>
@@ -39,7 +42,7 @@ const NavLinks = () => {
           <Link to={'/ustawienia'}>
             <img
               className={css.image}
-              src={`http://localhost:5000/${auth.userPic}`}
+              src={`${auth.userPic}`}
               alt=""
             />
           </Link>

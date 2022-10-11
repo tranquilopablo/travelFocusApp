@@ -8,10 +8,31 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+
 const checkAuth = require('../middleware/check-auth');
 const fileUpload = require('../middleware/file-upload');
 const User = require('../models/user');
 const Place = require('../models/place');
+
+const bucketName = process.env.BUCKET_NAME;
+const bucketRegion = process.env.BUCKET_REGION;
+const accessKey = process.env.ACCESS_KEY;
+const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion,
+});
+const randomId = uuidv4();
 
 /////////////////////////////////////////////////////////////////
 // GET ALL USERS
@@ -110,13 +131,35 @@ router.post(
       return next(error);
     }
 
+    const params = {
+      Bucket: bucketName,
+      Key: `${req.file.originalname}${randomId}`,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
+    console.log(params.Key);
+
+    const command = new PutObjectCommand(params);
+
+    await s3.send(command);
+
+    // const newCommand = new GetObjectCommand({
+    //   Bucket: bucketName,
+    //   Key: params.Key,
+    // });
+
+    // const url = await getSignedUrl(s3, newCommand, { expiresIn: 3600 });
+
+    const workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
+
     const createdUser = new User({
       name,
       email,
-      image: req.file.path,
+      image: workingUrl,
       password: hashedPassword,
       places: [],
     });
+    // image: req.file.path,
 
     try {
       await createdUser.save();
@@ -256,12 +299,27 @@ router.patch(
       return next(error);
     }
 
+    const params = {
+      Bucket: bucketName,
+      Key: `${req.file.originalname}${randomId}`,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
+    console.log(params.Key);
+
+    const command = new PutObjectCommand(params);
+
+    await s3.send(command);
+
+    const workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
+
     updatedUser.name = name;
     updatedUser.email = email;
     updatedUser.password = hashedPassword;
 
     if (req.file) {
-      updatedUser.image = req.file.path;
+      // updatedUser.image = req.file.path;
+      updatedUser.image = workingUrl;
     }
 
     try {
@@ -316,9 +374,9 @@ router.delete('/:uid', async (req, res, next) => {
     return next(error);
   }
 
-  fs.unlink(imagePath, (err) => {
-    console.log(err);
-  });
+  // fs.unlink(imagePath, (err) => {
+  //   console.log(err);
+  // });
 
   res.status(200).json({ message: 'Deleted user' });
 });

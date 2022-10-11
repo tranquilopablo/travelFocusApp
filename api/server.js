@@ -10,7 +10,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/images', express.static(path.join(__dirname, '/images')));
+// app.use('/images', express.static(path.join(__dirname, '/images')));
 
 // for handling CORS error
 app.use((req, res, next) => {

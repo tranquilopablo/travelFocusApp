@@ -75,6 +75,8 @@ const PlaceItem = (props) => {
     updateDoneStatus(!itemDone);
   };
 
+  // src={`http://localhost:5000/${props.image}`}
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -112,10 +114,7 @@ const PlaceItem = (props) => {
         <Card className={css.placeItemContent}>
           {isLoading && <LoadingSpinner asOverlay />}
           <div className={css.itemImage}>
-            <img
-              src={`http://localhost:5000/${props.image}`}
-              alt={props.title}
-            />
+            <img src={`${props.image}`} alt={props.title} />
           </div>
           <div className={css.itemInfo}>
             <h2>{props.title}</h2>

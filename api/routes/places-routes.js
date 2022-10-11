@@ -4,12 +4,34 @@ const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 const getCoordsForAddress = require('../util/location');
 const Place = require('../models/place');
 const User = require('../models/user');
 const fileUpload = require('../middleware/file-upload');
 const checkAuth = require('../middleware/check-auth');
+
+const bucketName = process.env.BUCKET_NAME;
+const bucketRegion = process.env.BUCKET_REGION;
+const accessKey = process.env.ACCESS_KEY;
+const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion,
+});
+const randomId = uuidv4();
 
 ///////////////////////////////////////////////////////////////////////////////
 // GET PLACE BY PLACE ID
@@ -81,17 +103,41 @@ router.post(
     } catch (error) {
       return next(error);
     }
+
+    const params = {
+      Bucket: bucketName,
+      Key: `${req.file.originalname}${randomId}`,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
+
+    const command = new PutObjectCommand(params);
+
+    await s3.send(command);
+
+    // const newCommand = new GetObjectCommand({
+    //   Bucket: bucketName,
+    //   Key: params.Key,
+    // });
+
+    // const url = await getSignedUrl(s3, newCommand, { expiresIn: 3600 });
+
+    const workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
+
     const createdPlace = new Place({
       title,
       description,
       address,
       location: coordinates,
-      image: req.file.path,
+      image: workingUrl,
       creator,
       priority,
       status,
       done: false,
     });
+
+    // image: req.file.path,
+    // image: req.file.buffer,
 
     let user;
     try {
@@ -169,6 +215,23 @@ router.patch(
       return next(error);
     }
 
+    let workingUrl;
+    if (req.file) {
+      const params = {
+        Bucket: bucketName,
+        Key: `${req.file.originalname}${randomId}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+      };
+
+      const command = new PutObjectCommand(params);
+
+      await s3.send(command);
+
+      workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
+    }
+
+
     updatedPlace.title = title;
     updatedPlace.description = description;
     updatedPlace.address = address;
@@ -179,7 +242,8 @@ router.patch(
     updatedPlace.done = done;
 
     if (req.file) {
-      updatedPlace.image = req.file.path;
+      // updatedPlace.image = req.file.path;
+      updatedPlace.image = workingUrl;
     }
 
     try {
@@ -236,9 +300,9 @@ router.delete('/:pid/:uid', async (req, res, next) => {
     return next(error);
   }
 
-  fs.unlink(imagePath, (err) => {
-    console.log(err);
-  });
+  // fs.unlink(imagePath, (err) => {
+  //   console.log(err);
+  // });
 
   res.status(200).json({ message: 'Deleted place' });
 });

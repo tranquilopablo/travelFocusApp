@@ -140,6 +140,8 @@ const Settings = () => {
     } catch (err) {}
   };
 
+  // initialValue={`http://localhost:5000/${loadedUser.image}`}
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -190,7 +192,7 @@ const Settings = () => {
               id="image"
               onInput={inputHandler}
               errorText=""
-              initialValue={`http://localhost:5000/${loadedUser.image}`}
+              initialValue={`${loadedUser.image}`}
               initialValid={true}
             />
             <Input
