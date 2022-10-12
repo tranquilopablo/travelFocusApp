@@ -47,7 +47,8 @@ mongoose
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@pawel.vs6xb.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(5000, () => {
+    // process.env.PORT dodane po wrzuceniu na heroku
+    app.listen(process.env.PORT || 5000, () => {
       console.log('Backend is runningg');
       console.log('Connected to MongoDB');
     });
