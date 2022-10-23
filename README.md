@@ -22,7 +22,7 @@ The form on the frontend is validated without the use third party form validator
 
 **Client:** React, CSS Modules, React Context, Firebase, React Transition Group
 
-**Server:** Node, Express,MongoDb, AWS S3, Heroku 
+**Server:** Node, Express,MongoDb, AWS S3, REST API, Heroku 
 
 ## Lessons Learned
 The project allowed me to gain practice in application state management using the Context API. After writing a custom hook to fetch data,  first time i used AbortController to interrupt asynchronous queries. The challenge was implementing google maps so that each place would have its coordinates stored after the given address. Also writing the server itself was another practice, along with writing schemas in mongoose and linking the user model to the place model to be able, for example, when a user is deleted, his place objects also must to be deleted from the database. Again, as this was the first time i had to deal with AWS S3 bucket service for images, given that the documentation itself is not the most pleasant, there were also difficulties with the correct implementation here. solved most of the problems by searching for information on the Internet, mainly stack overflow and from the documentation.
