@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
 const fs = require('fs');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
@@ -53,7 +52,6 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:uid', async (req, res, next) => {
   const userId = req.params.uid;
-
   let user;
   try {
     user = await User.findById(userId);
@@ -62,15 +60,11 @@ router.get('/:uid', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-
   if (!user) {
     const error = new Error('Nie znaleziono tego użytkownika');
     error.code = 404;
     return next(error);
   }
-
-  // res.json({ user: user.toObject({ getters: true }) });
-
   res.status(201).json({
     userId: user.id,
     email: user.email,
@@ -91,7 +85,6 @@ router.post(
   ],
   async (req, res, next) => {
     const errors = validationResult(req);
-
     if (!errors.isEmpty()) {
       const error = new Error(
         'Nieprawidłowe dane przeszły, proszę sprawdź dane.'
@@ -99,9 +92,7 @@ router.post(
       error.code = 422;
       return next(error);
     }
-
     const { name, email, password } = req.body;
-
     let existingUser;
     try {
       existingUser = await User.findOne({ email: email });
@@ -112,7 +103,6 @@ router.post(
       error.code = 500;
       return next(error);
     }
-
     if (existingUser) {
       const error = new Error(
         'Użytkownik o podanym emailu już istnieje. Proszę zaloguj się w takim razie. '
@@ -120,9 +110,7 @@ router.post(
       error.code = 422;
       return next(error);
     }
-
     let hashedPassword;
-
     try {
       hashedPassword = await bcrypt.hash(password, 12);
     } catch (err) {
@@ -130,7 +118,6 @@ router.post(
       error.code = 500;
       return next(error);
     }
-
     const params = {
       Bucket: bucketName,
       Key: `${req.file.originalname}${randomId}`,
@@ -139,18 +126,8 @@ router.post(
     };
 
     const command = new PutObjectCommand(params);
-
     await s3.send(command);
-
-    // const newCommand = new GetObjectCommand({
-    //   Bucket: bucketName,
-    //   Key: params.Key,
-    // });
-
-    // const url = await getSignedUrl(s3, newCommand, { expiresIn: 3600 });
-
     const workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
-
     const createdUser = new User({
       name,
       email,
@@ -158,8 +135,6 @@ router.post(
       password: hashedPassword,
       places: [],
     });
-    // image: req.file.path,
-
     try {
       await createdUser.save();
     } catch (err) {
@@ -169,7 +144,6 @@ router.post(
       error.code = 500;
       return next(error);
     }
-
     let token;
     try {
       token = jwt.sign(
@@ -184,7 +158,6 @@ router.post(
       error.code = 500;
       return next(error);
     }
-
     res.status(201).json({
       userId: createdUser.id,
       email: createdUser.email,
@@ -198,9 +171,7 @@ router.post(
 // LOGIN
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
-
   let existingUser;
-
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
@@ -208,13 +179,11 @@ router.post('/login', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-
   if (!existingUser) {
     const error = new Error('Podane dane do logowania są nieprawidłowe ');
     error.code = 403;
     return next(error);
   }
-
   let isValidPassword = false;
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
@@ -228,7 +197,6 @@ router.post('/login', async (req, res, next) => {
     error.code = 403;
     return next(error);
   }
-
   const userObject = existingUser.toObject({ getters: true });
 
   let token;
@@ -245,7 +213,6 @@ router.post('/login', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-
   res.json({
     userId: userObject.id,
     email: userObject.email,
@@ -272,18 +239,14 @@ router.patch(
   ],
   async (req, res, next) => {
     const errors = validationResult(req);
-
     if (!errors.isEmpty()) {
       const error = new Error('Niepoprawne dane, proszę sprawdzić poprawność.');
       error.code = 422;
       return next(error);
     }
-
     const { name, email, password } = req.body;
     const userId = req.params.uid;
-
     let hashedPassword;
-
     try {
       hashedPassword = await bcrypt.hash(password, 12);
     } catch (err) {
@@ -291,7 +254,6 @@ router.patch(
       error.code = 500;
       return next(error);
     }
-
     let updatedUser;
     try {
       updatedUser = await User.findById(userId);
@@ -311,21 +273,16 @@ router.patch(
       };
 
       const command = new PutObjectCommand(params);
-
       await s3.send(command);
-
       workingUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${req.file.originalname}${randomId}`;
     }
 
     updatedUser.name = name;
     updatedUser.email = email;
     updatedUser.password = hashedPassword;
-
     if (req.file) {
-      // updatedUser.image = req.file.path;
       updatedUser.image = workingUrl;
     }
-
     try {
       await updatedUser.save();
     } catch (err) {
@@ -333,9 +290,7 @@ router.patch(
       error.code = 500;
       return next(error);
     }
-
     const userObject = updatedUser.toObject({ getters: true });
-
     res.status(200).json({
       userId: userObject.id,
       email: userObject.email,
@@ -348,7 +303,6 @@ router.patch(
 //DELETE USER
 router.delete('/:uid', async (req, res, next) => {
   const userId = req.params.uid;
-
   let user;
   try {
     user = await User.findById(userId).populate('places');
@@ -357,15 +311,12 @@ router.delete('/:uid', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-
   if (!user) {
     const error = new Error('Nie można znależć użytkownika o podanym id');
     error.code = 404;
     return next(error);
   }
-
   const imagePath = user.image;
-
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -377,11 +328,6 @@ router.delete('/:uid', async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-
-  // fs.unlink(imagePath, (err) => {
-  //   console.log(err);
-  // });
-
   res.status(200).json({ message: 'Usunięto użytkownika' });
 });
 

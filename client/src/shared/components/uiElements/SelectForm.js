@@ -1,5 +1,4 @@
 import React from 'react';
-
 import css from './SelectForm.module.css';
 
 const SelectForm = (props) => {

@@ -2,17 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
 
 const app = express();
-
 app.use(bodyParser.json());
 
-// app.use('/images', express.static(path.join(__dirname, '/images')));
-
-// handling CORS errors
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -22,7 +17,6 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
   next();
 });
-
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
 
@@ -32,7 +26,6 @@ app.use((req, res, next) => {
   throw error;
 });
 
-// middleware for handling errors in express
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
@@ -41,13 +34,11 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'Wystąpił nieznany bląd!' });
 });
 
-mongoose;
 mongoose
   .connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@pawel.vs6xb.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    // process.env.PORT dodane po wrzuceniu na heroku
     app.listen(process.env.PORT || 5000, () => {
       console.log('Backend is runningg');
       console.log('Connected to MongoDB');

@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import { AuthContext } from '../shared/context/auth-context';
 import {
   VALIDATOR_EMAIL,
@@ -14,7 +13,6 @@ import ImageUpload from '../shared/components/uiElements/ImageUpload';
 import Input from '../shared/components/uiElements/Input';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import Card from '../shared/components/uiElements/Card';
-
 import css from './Login.module.css';
 import Modal from '../shared/components/uiElements/Modal';
 import { useHttpClient } from '../shared/hooks/http-hook';
@@ -55,7 +53,6 @@ const Settings = () => {
           process.env.REACT_APP_BACKEND_URL + `/users/${auth.userId}`,
         );
         setLoadedUser(responseData);
-
         setFormData(
           {
             email: {
@@ -102,7 +99,6 @@ const Settings = () => {
       if (loadedUser.image !== formState.inputs.image.value) {
         formData.append('image', formState.inputs.image.value);
       }
-
       const responseData = await sendRequest(
         process.env.REACT_APP_BACKEND_URL + `/users/${auth.userId}`,
         'PATCH',
@@ -111,10 +107,7 @@ const Settings = () => {
           Authorization: 'Bearer ' + auth.token,
         }
       );
-      // don't need headers object with application/json when using FormData, but finally i use token so i need put in header Authorization
-
       responseData.token = auth.token;
-
       auth.login(responseData);
       history.push('/settings-route/reload');
     } catch (err) {}
@@ -122,9 +115,7 @@ const Settings = () => {
 
   const confirmDeleteHandler = async (e) => {
     e.preventDefault();
-
     setShowConfirmModal(false);
-
     try {
       const responseData = await sendRequest(
         process.env.REACT_APP_BACKEND_URL + `/users/${auth.userId}`,
@@ -134,13 +125,10 @@ const Settings = () => {
           Authorization: 'Bearer ' + auth.token,
         }
       );
-
-      console.log(responseData.message);
       auth.logout();
     } catch (err) {}
   };
 
-  // initialValue={`http://localhost:5000/${loadedUser.image}`}
 
   return (
     <React.Fragment>
@@ -171,7 +159,7 @@ const Settings = () => {
             <div className="center">
               <LoadingSpinner />
             </div>
-          )}{' '}
+          )}
           <h2>EDYTUJ KONTO</h2>
           <hr />
           <form onSubmit={updateAccountHandler}>

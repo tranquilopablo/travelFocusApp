@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import css from './ImageUpload.module.css';
-
 import Button from './Button';
 
 const ImageUpload = (props) => {
@@ -14,10 +13,6 @@ const ImageUpload = (props) => {
     if (!file) {
       return;
     }
-    // if (props.initialValue) {
-    //   setPreviewUrl(props.initialValue);
-    //   console.log(props.initialValue);
-    // }
     const fileReader = new FileReader();
     fileReader.onload = () => {
       setPreviewUrl(fileReader.result);
@@ -26,7 +21,6 @@ const ImageUpload = (props) => {
   }, [file]);
 
   const pickedHandler = (event) => {
-    // console.log(event.target);
     let pickedFile;
     let fileIsValid = isValid;
     if (event.target.files && event.target.files.length === 1) {
@@ -40,11 +34,8 @@ const ImageUpload = (props) => {
     }
     props.onInput(props.id, pickedFile, fileIsValid);
   };
-
   const pickImageHandler = () => {
     filePickerRef.current.click();
-    
-
   };
 
   return (

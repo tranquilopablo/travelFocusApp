@@ -11,4 +11,3 @@ const INITIAL_STATE = {
 
 export const AuthContext = createContext(INITIAL_STATE);
 
-// user: JSON.parse(localStorage.getItem('userData')) || null,

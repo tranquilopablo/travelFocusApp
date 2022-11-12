@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-
 import PlaceList from '../components/PlaceList';
 import PlacesHeader from '../shared/components/uiElements/PlacesHeader';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
@@ -22,16 +21,12 @@ const UserPlaces = () => {
         const responseData = await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`
         );
-
         if (responseData.places.length >= 2) {
           responseData.places.sort((a, b) =>
             a.priority > b.priority ? -1 : 1
           );
         }
-
         setAllPlaces(responseData.places);
-
-        // condition of rendering places that belong to user or not, public places or private ones
         let fetchedPlaces;
         if (auth.userId === userId) {
           fetchedPlaces = responseData.places;
@@ -40,7 +35,6 @@ const UserPlaces = () => {
             (place) => parseInt(place.status) === 1
           );
         }
-
         setLoadedPlaces(fetchedPlaces);
       } catch (err) {}
     };
@@ -74,9 +68,6 @@ const UserPlaces = () => {
   };
 
   const refreshPlaces = () => {
-    // setTimeout(() => {
-    //   history.push(`/some-route/reload`);
-    // }, 300);
     history.push(`/some-route/reload`);
   };
 

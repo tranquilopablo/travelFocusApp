@@ -6,7 +6,7 @@ const formReducer = (state, action) => {
       let formIsValid = true;
       for (const inputId in state.inputs) {
         if (!state.inputs[inputId]) {
-          continue; // continue means that this iteration stops and we go to next input ( inputId). So it helps when given inputId is undefined , then we say stop at this point and go to another inputId
+          continue; 
         }
         if (inputId === action.inputId) {
           formIsValid = formIsValid && action.isValid;
@@ -30,7 +30,6 @@ const formReducer = (state, action) => {
             inputs: action.inputs,
             isValid: action.formIsValid,
         };
-
     default:
       return state;
   }

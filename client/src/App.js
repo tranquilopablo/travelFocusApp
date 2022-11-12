@@ -9,7 +9,6 @@ import MainNavigation from './shared/components/navigation/MainNavigation';
 import Users from './pages/Users';
 import { AuthContext } from './shared/context/auth-context';
 import LoadingSpinner from './shared/components/uiElements/LoadingSpinner';
-
 const NewPlace = React.lazy(() => import('./pages/NewPlace'));
 const UserPlaces = React.lazy(() => import('./pages/UserPlaces'));
 const UpdatePlace = React.lazy(() => import('./pages/UpdatePlace'));
@@ -35,10 +34,8 @@ function App() {
         image: userData.image,
         token: userData.token,
         expiration: tokenExpirationDateLeft.toISOString(),
-        // to be sure that in Json file we got correct date after conversion
       })
     );
-
     setToken(userData.token);
     setUserId(userData.userId);
     setUserPic(userData.image);
@@ -63,7 +60,6 @@ function App() {
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData')) || false;
-
     if (
       storedData &&
       storedData.token &&

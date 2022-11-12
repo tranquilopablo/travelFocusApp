@@ -1,9 +1,7 @@
 import React, { useState, useContext } from 'react';
-
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import Button from '../shared/components/uiElements/Button';
 import Card from '../shared/components/uiElements/Card';
-
 import css from './PlaceItem.module.css';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import Modal from '../shared/components/uiElements/Modal';
@@ -19,7 +17,6 @@ const PlaceItem = (props) => {
   const [itemDone, setItemDone] = useState(props.done);
 
   const openMapHandler = () => setShowMap(true);
-
   const closeMapHandler = () => setShowMap(false);
 
   const showDeleteWarningHandler = () => {
@@ -76,8 +73,6 @@ const PlaceItem = (props) => {
     updateDoneStatus(!itemDone);
   };
 
-  // src={`http://localhost:5000/${props.image}`}
-
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -93,7 +88,6 @@ const PlaceItem = (props) => {
           <Map center={props.coordinates} zoom={8} />
         </div>
       </Modal>
-
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
@@ -125,7 +119,6 @@ const PlaceItem = (props) => {
               <p>
                 Priorytet: <span className={css.bolded}>{props.priority}</span>
               </p>
-
               {auth.userId === props.creatorId && (
                 <p>
                   Dodaj do:
@@ -152,7 +145,6 @@ const PlaceItem = (props) => {
                   )}
                 </p>
               )}
-
               <p className={css.boldedCheckStatus}>
                 {!itemDone ? (
                   <span>
@@ -172,7 +164,6 @@ const PlaceItem = (props) => {
               </p>
             </div>
           </div>
-
           <div className={css.actions}>
             <Button inverse onClick={openMapHandler}>
               ZOBACZ NA MAPIE

@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import { AuthContext } from '../shared/context/auth-context';
 import {
   VALIDATOR_EMAIL,
@@ -15,7 +14,6 @@ import ImageUpload from '../shared/components/uiElements/ImageUpload';
 import Input from '../shared/components/uiElements/Input';
 import LoadingSpinner from '../shared/components/uiElements/LoadingSpinner';
 import Card from '../shared/components/uiElements/Card';
-
 import css from './Login.module.css';
 
 const Login = () => {
@@ -23,7 +21,6 @@ const Login = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
   const [formState, inputHandler, setFormData] = useFormHook(
     {
       email: {
@@ -40,7 +37,7 @@ const Login = () => {
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
-      // isLoginMode still has old value, we change it at the end of the function
+      // isLoginMode still has old value, I change it at the end of the function
       setFormData(
         { ...formState.inputs, name: undefined, image: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
@@ -61,13 +58,11 @@ const Login = () => {
         false
       );
     }
-
     setIsLoginMode((prevMode) => !prevMode);
   };
 
   const authsubmitHandler = async (e) => {
     e.preventDefault();
-
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
@@ -81,14 +76,11 @@ const Login = () => {
             'Content-Type': 'application/json',
           }
         );
-
         auth.login(responseData);
-        // history.push(`/${responseData.userId}/places`);
         history.push(`/`);
       } catch (e) {}
     } else {
       try {
-        // with FormData don't need to add application/json because req contains it allready
         const formData = new FormData();
         formData.append('email', formState.inputs.email.value);
         formData.append('name', formState.inputs.name.value);
@@ -99,7 +91,6 @@ const Login = () => {
           'POST',
           formData
         );
-
         auth.login(responseData);
       } catch (err) {}
     }

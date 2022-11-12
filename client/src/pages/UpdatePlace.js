@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-
 import Button from '../shared/components/uiElements/Button';
 import Card from '../shared/components/uiElements/Card';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
@@ -16,7 +15,6 @@ import {
   VALIDATOR_REQUIRE,
 } from '../shared/util/validators.js';
 import { AuthContext } from '../shared/context/auth-context';
-
 import css from './NewPlace.module.css';
 
 const UpdatePlace = () => {
@@ -87,7 +85,6 @@ const UpdatePlace = () => {
 
   const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
-
     try {
       const formData = new FormData();
       formData.append('title', formState.inputs.title.value);
@@ -97,11 +94,9 @@ const UpdatePlace = () => {
       formData.append('priority', selectValue);
       formData.append('status', radioValue);
       formData.append('done', loadedPlace.done);
-
       if (loadedPlace.image !== formState.inputs.image.value) {
         formData.append('image', formState.inputs.image.value);
       }
-
       await sendRequest(
         `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`,
         'PATCH',
@@ -110,8 +105,6 @@ const UpdatePlace = () => {
           Authorization: 'Bearer ' + auth.token,
         }
       );
-      // don't need headers object with application/json when using FormData
-
       history.push('/' + auth.userId + '/miejsca');
     } catch (err) {}
   };
@@ -119,7 +112,6 @@ const UpdatePlace = () => {
   const handleGoBack = () => {
     history.push('/' + auth.userId + '/miejsca');
   };
-
   if (isLoading) {
     return (
       <div className="center">
@@ -127,7 +119,6 @@ const UpdatePlace = () => {
       </div>
     );
   }
-
   if (!loadedPlace && !error) {
     return (
       <div className="center">
@@ -137,9 +128,6 @@ const UpdatePlace = () => {
       </div>
     );
   }
-
-
-  // initialValue={`http://localhost:5000/${loadedPlace.image}`}
 
   return (
     <React.Fragment>

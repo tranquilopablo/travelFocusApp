@@ -1,7 +1,6 @@
 import React from 'react';
 import UserItem from './UserItem';
 import Card from '../shared/components/uiElements/Card';
-
 import css from './UsersList.module.css';
 
 const UsersList = (props) => {

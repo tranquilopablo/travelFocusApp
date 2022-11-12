@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import Button from '../shared/components/uiElements/Button';
 import ErrorModal from '../shared/components/uiElements/ErrorModal';
 import ImageUpload from '../shared/components/uiElements/ImageUpload';
@@ -11,12 +10,10 @@ import SelectForm from '../shared/components/uiElements/SelectForm';
 import { useFormHook } from '../shared/hooks/useFormHook';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import { AuthContext } from '../shared/context/auth-context';
-
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from '../shared/util/validators.js';
-
 import css from './NewPlace.module.css';
 
 const NewPlace = () => {
@@ -24,7 +21,6 @@ const NewPlace = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [selectValue, setSelectValue] = useState('1');
   const [radioValue, setRadioValue] = useState('1');
-
   const history = useHistory();
 
   const [formState, inputHandler] = useFormHook(

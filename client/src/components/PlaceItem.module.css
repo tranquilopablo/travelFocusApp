@@ -1,30 +1,25 @@
 .placeItem {
   margin: 1rem 0;
 }
-
 .placeItemContent {
   padding: 0;
   background: white;
 }
-
 .itemInfo {
   padding: 1rem;
   text-align: center;
 }
-
 .itemImage {
   width: 100%;
   height: 12.5rem;
   margin-right: 1.5rem;
   border-radius: 20%;
 }
-
 .itemImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 .bolded {
   font-weight: bold;
   margin-left: 0.5rem;
@@ -32,12 +27,10 @@
 .boldedCheck {
   cursor: pointer;
 }
-
 .boldedCheck .faList,
 .boldedCheck .faCheck {
   font-size: 1.2rem;
 }
-
 .boldedCheckStatus .faList,
 .boldedCheckStatus .faCheck {
   font-weight: bold;
@@ -50,13 +43,11 @@
 .boldedCheckStatus .faCheck {
   color: green;
 }
-
 .itemInfo h2,
 .itemInfo h3,
 .itemInfo p {
   margin: 0 0 0.5rem 0;
 }
-
 .itemExtra {
   display: flex;
   justify-content: space-between;
@@ -69,39 +60,31 @@
 .itemExtra p:nth-child(2) {
   margin: 0 0rem;
 }
-
 .actions {
   padding: 1rem;
   text-align: center;
   border-top: 1px solid #ccc;
 }
-
 .actions button,
 .actions a {
   margin: 0.5rem;
 }
-
 .modalContent {
   padding: 0;
 }
-
 .modalActions {
   text-align: right;
 }
-
-
 
 @media (min-width: 768px) {
   .itemImage {
     height: 20rem;
   }
 }
-
 .mapContainer {
   height: 18rem;
   width: 100%;
 }
-
 @media (min-width: 1400px) {
   .mapContainer {
     height: 28rem;

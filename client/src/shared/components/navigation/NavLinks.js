@@ -1,14 +1,10 @@
 import React, { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/auth-context';
-
 import css from './NavLinks.module.css';
 
 const NavLinks = () => {
   const auth = useContext(AuthContext);
-
-
-  // src={`http://localhost:5000/${auth.userPic}`}
 
   return (
     <ul className={css.navLinks}>

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-
 import css from './PlaceList.module.css';
 import Card from '../shared/components/uiElements/Card';
 import Button from '../shared/components/uiElements/Button';
@@ -8,7 +7,6 @@ import { AuthContext } from '../shared/context/auth-context';
 
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
-
   if (props.items.length === 0 && auth.userId !== props.userId) {
     return (
       <div className={`${css.placeList} center`}>
@@ -19,9 +17,6 @@ const PlaceList = (props) => {
       </div>
     );
   }
-
-
-
   if (props.items.length === 0) {
     return (
       <div className={`${css.placeList} center`}>
@@ -52,8 +47,6 @@ const PlaceList = (props) => {
             done={place.done}
             onDelete={props.onDeletedPlace}
             refreshPlaces={props.refreshPlaces}
-
-
         />
     ))}
 </ul>

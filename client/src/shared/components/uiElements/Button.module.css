@@ -10,39 +10,32 @@
     text-decoration: none;
     display: inline-block;
 }
-
 .button:focus {
     outline: none;
 }
-
 .button:hover,
 .button:active {
     background: #ff4382;
     border-color: #ff4382;
 }
-
 .buttonInverse {
     background: transparent;
     color: #ff0055;
 }
-
 .buttonInverse:hover,
 .buttonInverse:active {
     color: white;
     background: #ff0055;
 }
-
 .buttonDanger {
     background: #830000;
     border-color: #830000;
 }
-
 .buttonDanger:hover,
 .buttonDanger:active {
     background: #f34343;
     border-color: #f34343;
 }
-
 .button:disabled,
 .button:hover:disabled,
 .button:active:disabled {
@@ -51,11 +44,9 @@
     border-color: #ccc;
     cursor: not-allowed;
 }
-
 .buttonSmall {
     font-size: 0.8rem;
 }
-
 .buttonBig {
     font-size: 1.5rem;
 }

@@ -9,13 +9,10 @@
   justify-content: center;
   align-items: center;
 }
-
 .navLinks li {
   margin: 1rem;
 }
-
 .navLinks a {
-  /* border: 1px solid transparent;  */
   color: #292929;
   text-decoration: none;
   padding: 0.5rem;
@@ -23,7 +20,6 @@
   font-size: 0.9rem;
   letter-spacing: 0.8px;
 }
-
 .navLinks a:hover,
 .navLinks a:active,
 .navLinks a.active,
@@ -31,7 +27,6 @@
   box-shadow: 0 0.5rem 0.5rem -0.4rem #413e3d;
   background-color: rgb(243, 243, 243);
 }
-
 .navLinks button {
   cursor: pointer;
   padding: 0.5rem;
@@ -43,11 +38,9 @@
   background-color: transparent;
   letter-spacing: 0.8px;
 }
-
 .navLinks button:focus {
   outline: none;
 }
-
 .navLinks button:hover,
 .navLinks button:active {
   box-shadow: 0 0.5rem 0.5rem -0.4rem #413e3d;
@@ -58,20 +51,16 @@
   .navLinks {
     flex-direction: row;
   }
-
   .navLinks li {
     margin: 0 0.5rem;
   }
-
   .navLinks a {
     text-decoration: none;
   }
-
   .navLinks button {
     border: 1px solid white;
     background: transparent;
   }
-
   .navLinks button:hover,
   .navLinks button:active {
     box-shadow: 0 0.5rem 0.5rem -0.4rem #413e3d;
@@ -81,14 +70,12 @@
     border: none;
   }
 }
-
 .image {
   border-radius: 50%;
   object-fit: cover;
   width: 2.5rem;
   height: 2.5rem;
 }
-
 .avatar a:last-child {
   box-shadow: none;
   background-color: rgb(255, 255, 255);
