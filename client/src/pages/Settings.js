@@ -89,13 +89,11 @@ const Settings = () => {
 
   const updateAccountHandler = async (e) => {
     e.preventDefault();
-
     try {
       const formData = new FormData();
       formData.append('email', formState.inputs.email.value);
       formData.append('name', formState.inputs.name.value);
       formData.append('password', formState.inputs.password.value);
-
       if (loadedUser.image !== formState.inputs.image.value) {
         formData.append('image', formState.inputs.image.value);
       }
@@ -128,8 +126,6 @@ const Settings = () => {
       auth.logout();
     } catch (err) {}
   };
-
-
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
